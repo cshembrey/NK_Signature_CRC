@@ -1,0 +1,262 @@
+
+
+# Setup
+```{r}
+library(edgeR)
+library(DT) 
+library(limma)
+library(ggplot2)
+
+# When filtering data for scoring, we want to ensure that all our candidate genes are retained even if they have low expression (we expect their expression to be low anyway as we are primarily sequencing tumour cells in bulkRNAseq data,a nd not NK cells)
+CandidateGenes <- read.csv("../data/NK_Signatures/CombinedSig_forFiltering.csv", stringsAsFactors = F)
+NKSig <- read.csv("../data/NK_Signatures/NKSigs_TotalBrightDim.csv", stringsAsFactors = F)
+
+# merge:
+NKSig <- unique(c(NKSig$NKSig_AllGenes, CandidateGenes$Symbol)) # now 879 genes, as symbols
+
+CombinedSig <- alias2SymbolUsingNCBI(NKSig, "../data/Homo_sapiens.gene_info", required.columns = c("GeneID", "Symbol"))
+rownames(CombinedSig) <- CombinedSig$GeneID
+```
+
+# Read in the GSE39582 CRC data and annotations. Perform filtration for DEGs (exclude lowly expressed genes) and for scoring (filter lowly expressed genes, but keep potential genes of interest even if they are lowly expressed)
+```{r fig.width = 12, fig.height=6}
+Annot <-  read.csv("../data/KeyData/Marisa_CRC/MarisaAnnot_GSE39582.csv", na.strings = "", stringsAsFactors = F) # 390 x 17
+rownames(Annot) <-  Annot$GEO_Accession
+
+# Counts <- read.csv("../data/KeyData/Marisa_CRC/MarisaCounts_GSE39582.csv", stringsAsFactors = F)
+# rownames(Counts) <- Counts$ID_REF
+# Counts <- Counts[ , -c(1)]
+# 
+# library(hgu133plus2.db)
+# # Map probe IDs to gene IDs
+# x <- hgu133plus2ENTREZID
+# # Get the probe identifiers that are mapped to an ENTREZ Gene ID
+# mapped_probes <- mappedkeys(x)
+# # Convert to a list
+# # xx <- as.list(x[mapped_probes])
+# IDs <- as.data.frame(x[mapped_probes])
+# 
+# # Merge this to expr data: ## 4193
+# dIDs <- merge(IDs, Counts, by.x = "probe_id", by.y = 0)
+# # sum(duplicated(dIDs$gene_id)) == 21748
+# 
+# ## Take the median of the probes mapped to the same gene
+# library(dplyr)
+# dMed <- dIDs[, 2:ncol(dIDs)] %>%
+#   group_by(gene_id) %>%
+#   summarise_all(median)
+# 
+# # for scoring only, proceed to normalisation and log transformation (can do this from raw counts for DEG analysis)
+# 
+# dMat <- as.matrix(dMed[, 2:ncol(dMed)])
+# row.names(dMat) <- dMed$gene_id
+# head(dMat) # this is already log-transformed
+# hist(dMat, breaks = 100) # no low-peak as not RNAseq
+# 
+# # filter out lowly expressed genes
+# row_medians <- rowMedians(dMat)
+# th <- 5
+# samples_cutoff <- 0.1*ncol(dMat)
+# 
+# kp1 <- apply(dMat, 1,
+#   function(x) {
+#     sum(x > th) >= samples_cutoff
+#   })
+# kp.1.check <- which(unlist(kp1)) # threshold of 5 = 12774 genes retained (remove bottom ~6K)
+# 
+# dFilt_ForDEGs <- dMat[kp1, ] # only 684/879 sig genes kept (of these, 16/43 NK sig genes...)
+# 
+# # For scoring, keep the signature genes (don't do this specifically for DEGs)
+# kp2 <- rownames(dMat) %in% CombinedSig$GeneID
+# kp2.check <- which(unlist(kp2)) # keeps 841/879 genes
+# 
+# # look at the difference between kp1 only and kp1/kp2 filt
+# dFilt_ForScoring <- dMat[kp1 | kp2, ] # ie. retain the sig genes even if they are lowly expressed
+# 
+# hist(dFilt_ForDEGs, breaks = 100)
+# hist(dFilt_ForScoring, breaks = 100)
+# write.csv(dFilt_ForDEGs, "MarisaCounts_FilteredforDEGs.csv")
+# write.csv(dFilt_ForScoring, "MarisaCounts_FilteredforScoring.csv")
+
+dFilt_ForDEGs <- read.csv("../data/KeyData/Marisa_CRC/MarisaCounts_FilteredforDEGs.csv")
+rownames(dFilt_ForDEGs) <- dFilt_ForDEGs$X
+dFilt_ForDEGs <- dFilt_ForDEGs[ , -c(1)]
+
+dFilt_ForScoring <- read.csv("../data/KeyData/Marisa_CRC/MarisaCounts_FilteredforScoring.csv")
+rownames(dFilt_ForScoring) <- dFilt_ForScoring$X
+dFilt_ForScoring <- dFilt_ForScoring[ , -c(1)]
+
+# remove the matched normal samples from the DEG cohort
+Nrm <- Annot[Annot$SampleType == "non tumoral colorectal mucosa", ] 
+dFilt_ForDEGs <- dFilt_ForDEGs[ , ! colnames(dFilt_ForDEGs) %in% rownames(Nrm)]
+
+```
+
+# Read in the NK-scored Marisa data and split into NK-high adn NK-Low groups (based on top- and bottom 10% of samples, ranked by NK score, respectively)
+```{r}
+Marisa <- read.csv("./data/Marisa_ForSurvivalAnalysis.csv", stringsAsFactors = F)
+
+summary(Marisa) # ranges from -0.42 to -0.27
+dim(Marisa) # with 566 samples, 10% = 57 samples
+
+MarisaOrd <- Marisa[order(Marisa$NKUp), ]
+rownames(MarisaOrd) <- MarisaOrd$X
+
+# take the top and bottom 10% of samples (not including the normal colons)
+NKHigh_Marisa <- rownames(MarisaOrd)[510:566]
+NKLow_Marisa <- rownames(MarisaOrd)[1:57]
+```
+
+# Construct DGEList for DEG analysis
+```{r}
+# filter to samples of interest
+HighLow <- as.data.frame(dFilt_ForDEGs[ , colnames(dFilt_ForDEGs) %in% c(NKLow_Marisa, NKHigh_Marisa)])
+HighLow <- HighLow[ , c(NKLow_Marisa, NKHigh_Marisa)]
+all(colnames(HighLow) == c(NKLow_Marisa, NKHigh_Marisa))
+
+# Create DGEList Object (without normal samples)
+  # first, subset the Annot
+Annot <- Annot[rownames(Annot) %in% c(NKLow_Marisa, NKHigh_Marisa), ]
+Annot <- Annot[c(NKLow_Marisa, NKHigh_Marisa), ]
+all(rownames(Annot) == c(NKLow_Marisa, NKHigh_Marisa)) # rows 1:58 = Low, 59:118 = High
+Annot$NKScore <- ""
+Annot$NKScore[1:57] <- "NK_Low"
+Annot$NKScore[58:114] <- "NK_High"
+
+# get hgnc_symbols for the genes slot
+library(biomaRt)
+ensembl <-  useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+entrez <- rownames(HighLow) # or character vector
+
+IDs <- getBM(attributes = c("entrezgene_id", "hgnc_symbol"),
+             filters = "entrezgene_id",
+             values = entrez,
+             mart = ensembl)
+
+IDs <- IDs[! duplicated(IDs$entrezgene_id), ]
+IDs <- IDs[! duplicated(IDs$hgnc_symbol), ] # 12364 unique
+rownames(IDs) <- IDs$entrezgene_id
+
+HighLow <- HighLow[rownames(HighLow) %in% IDs$entrezgene_id, ] 
+# for now, keep entrez IDs as the rownames (because of MA/EList issue later on)
+
+all(rownames(Annot) == colnames(HighLow)) # correct
+all(rownames(HighLow) == rownames(IDs)) # correct
+
+DGEList_Marisa <- DGEList(counts = HighLow, samples = Annot, genes = IDs)
+```
+
+# Create Design/Contrasts
+```{r}
+Design <- colnames(DGEList_Marisa$counts)
+NKScore <- c(rep("NK_Low", times = 57), rep("NK_High", times = 57))
+Design <- cbind(Design, NKScore)
+Design <- data.frame(Design)
+Group <- factor(Design$NKScore)
+Design <- model.matrix(~ 0 + Group)
+colnames(Design) <- levels(Group)
+```
+
+# QC Plots
+```{r}
+# library sizes
+ggplot(DGEList_Marisa$samples, aes_string(x = "GEO_Accession", y = "lib.size", fill = "NKScore")) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(values = c("darkred", "blue")) +
+  ggtitle("Library Sizes - Marisa Cohort") +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 90))
+
+# PCA
+library(ggfortify)
+ForPCA <- as.data.frame(t(DGEList_Marisa$counts))
+all(rownames(ForPCA) == c(NKLow_Marisa, NKHigh_Marisa)) #T
+ForPCA$NK_Score <- ""
+ForPCA$NK_Score[1:57] <- "NK_Low"
+ForPCA$NK_Score[58:114] <- "NK_High"
+ForPCA$NK_Score <- as.factor(ForPCA$NK_Score)
+
+PCA_Marisa <- prcomp(ForPCA[ , -c(12405)]) # remove the NK_Score column
+
+all(rownames(DGEList_Marisa$samples) == rownames(ForPCA))
+ForPCA <- cbind(DGEList_Marisa$samples, ForPCA)
+
+for(i in colnames(ForPCA)[c(6,9,13,14,15,20:23,33,37)]){
+print(autoplot(PCA_Marisa, data = ForPCA, shape = "NKScore", colour = as.character(i), size = 3) +
+        scale_shape_manual(values = c(16,17)) +
+        scale_color_brewer(palette = "Dark2") +
+        ggtitle("PCA Plots - Marisa Cohort") +
+        theme_light())
+}
+
+# RLE
+RLE <- sweep(DGEList_Marisa$counts, 1, rowMedians(as.matrix(DGEList_Marisa$counts)))
+RLE_data_gathered <- 
+  tidyr::gather(as.data.frame(RLE), patient_array, log2_expression_deviation)
+
+ggplot(RLE_data_gathered, aes(patient_array, log2_expression_deviation)) +
+  geom_boxplot(outlier.colour = NA) +
+    ggtitle("RLE Plot - Marisa Data") +
+  theme(axis.text.x = element_text(angle = 60,hjust = 1 ,
+                                  face = "bold"))
+```
+
+# Fit linear model and decide tests
+```{r}
+# first, convert to EList class (not automatic here, as microarray data)
+library(Biobase)
+# ---------- CRC
+ExprSet <- ExpressionSet(assayData = as.matrix(DGEList_Marisa$counts)) #, Samples = DGEList_CRC$samples, genes = DGEList_CRC$genes) 
+# only 1 column?
+# CRC_Fit2 <- lmFit(DGEList_CRC, DesignCRC) --> doesn't work on DGEList objects
+Fit <- lmFit(ExprSet, Design)
+
+#Make a contrast matrix & fit the data | input comparison you want to make
+Cont.matrix <- makeContrasts(HighvsLow = NK_High-NK_Low, levels = Design)
+Fit.cont <- contrasts.fit(Fit, Cont.matrix)
+Fit.cont <- eBayes(Fit.cont)
+plotSA(Fit.cont)
+Summa.fit <- decideTests(Fit.cont)
+summary(decideTests(Fit.cont)) # ~3000 down DEGs and ~4500 up DEGs
+
+HighvsLow <- topTable(Fit.cont, coef = "HighvsLow", sort.by = "p", adjust.method = "fdr", number = "inf")
+write.csv(HighvsLow, "Marisa_CRCs_DEGs_NK_High_vs_Low.csv", row.names=TRUE)
+```
+
+# GOana / KEGGa / Fry
+```{r fig.width=8}
+go.fisher <- goana(Fit.cont, geneid = rownames(Fit.cont), species="Hs")
+TopGO_100 <- topGO(go.fisher, ont="BP", sort = "up", number = 100)
+topGO(go.fisher, ont="BP", sort = "down")
+
+keg <- kegga(Fit.cont, geneid = rownames(Fit.cont), species="Hs")
+topKEGG(keg, sort = "up")
+topKEGG(keg, sort = "down")
+
+# search for NK related GO terms
+library(GO.db)
+NK_GO <- c("GO:0002228", "GO:0042267", "GO:0002370", "GO:0002423")
+# NK cell mediated immunity
+# NK cell mediated toxicity
+# NK cell cytokine production
+# NK cell mediated immune response to tumor cell
+# term <- select(GO.db, keys = NK_GO, columns = "TERM")
+
+library(org.Hs.eg.db)
+Rkeys(org.Hs.egGO2ALLEGS) <- NK_GO
+NK_GOgenes <- as.list(org.Hs.egGO2ALLEGS)
+
+fry(DGEList_Marisa$counts, index = NK_GOgenes, Design)
+
+pdf("Marisa_FryTesting_NKTerms.pdf", width = 6, height = 4)
+index <- rownames(Fit.cont) %in% NK_GOgenes[[1]]
+barcodeplot(Fit.cont$t[,1], index, main = paste0(NK_GO[1], ": NK cell mediated immunity"), labels = c("NK Score Low", "NK Score High"))
+index <- rownames(Fit.cont) %in% NK_GOgenes[[2]]
+barcodeplot(Fit.cont$t[,1], index, main = paste0(NK_GO[2], ": NK cell mediated toxicity"), labels = c("NK Score Low", "NK Score High"))
+index <- rownames(Fit.cont) %in% NK_GOgenes[[3]]
+barcodeplot(Fit.cont$t[,1], index, main = paste0(NK_GO[3], ": NK cell cytokine production"), labels = c("NK Score Low", "NK Score High"))
+index <- rownames(Fit.cont) %in% NK_GOgenes[[4]]
+barcodeplot(Fit.cont$t[,1], index, main = paste0(NK_GO[4], ": NK cell mediated immune response to tumor cell"), labels = c("NK Score Low", "NK Score High"))
+dev.off()
+
+```

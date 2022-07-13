@@ -1,0 +1,223 @@
+---
+title: "Untitled"
+author: "C Shembrey"
+date: "29/06/2020"
+output: html_document
+---
+
+# Setup
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(gridExtra)
+library(viridis)
+library(dplyr)
+library(ggpubr)
+```
+
+In this document, we visualise the gene expression profiles of our candidate genes using two scRNAseq datasets from primary CRC patients.
+
+There are two columns for the UMAP coordinates; these are uesd to generate scatterplots which are then coloured by the expression values of a given gene. 
+
+# Zhang SMART-Seq Data (GSE146771)
+```{r}
+SmartSeq <- readRDS("../data/KeyData/Zhang_scRNAseq/Zhang_SMARTseq_NK_candidates_sc_bulk_74Genes_of82Genes.RDS")
+
+# Reorder cells based on expression and add max values for gene expression in the title
+SmartSeq_Arranged <- SmartSeq %>%
+        group_by(Genes) %>%
+        arrange(LogExpr) %>%
+        mutate(maxVal = round(max(LogExpr), 2)) %>%
+        mutate(minVal = 0) %>%
+        mutate(GenesMax = paste0(Genes, " (max = ", maxVal, ")")) %>%
+        ungroup() %>%
+        data.frame()
+
+# remove genes that failed in tumour or stromal filt
+FiltGenes <- read.csv("../data/NK_Signatures/Post_scRNAseq_TumStrmFilt.csv")
+FiltGenes_nonUMAP <- FiltGenes[! FiltGenes$Fail_Source == "Fail_UMAP", ]
+FiltGenes_nonUMAP <- FiltGenes[! FiltGenes$Fail_Source == "Fail_Neutrophils", ]
+
+SmartSeq_Arranged <- SmartSeq_Arranged[! SmartSeq_Arranged$Genes %in% FiltGenes_nonUMAP$Genes, ]
+
+# Generate "legend" plot
+
+pdf("Zhang_SS_Key.pdf", width = 7, height = 7)            
+ggplot(SmartSeq_Arranged, aes_string("Global_tSNE_1" , "Global_tSNE_2", colour = "Cell.Annotation")) +
+            geom_point(size = 1) +
+            scale_color_manual(values = c("darkred", "greenyellow", "forestgreen", "purple", "blue", "dodgerblue", "salmon", "darkorange", "gold", "red", "darkorchid4")) +
+            theme_linedraw() +
+            theme(
+               axis.title = element_blank(),
+               axis.text = element_blank(),
+               panel.grid = element_blank(),
+               aspect.ratio = 1)
+dev.off()
+```
+
+# Zhang 10X Data (GSE146771)
+```{r fig.width=20, fig.height = 20}
+TenX <- readRDS("../data/KeyData/Zhang_scRNAseq/Zhang_10X_NK_candidates_sc_bulk_67Genes_of82Genes.RDS")
+
+# Reorder cells based on expression and add max values for gene expression in the title
+TenX_Arranged <- TenX %>%
+        group_by(Genes) %>%
+        arrange(LogExpr) %>%
+        mutate(maxVal = round(max(LogExpr), 2)) %>%
+        mutate(minVal = 0) %>%
+        mutate(GenesMax = paste0(Genes, " (max = ", maxVal, ")")) %>%
+        ungroup() %>%
+        data.frame()
+
+# remove genes that failed in tumour or stromal filt
+TenX_Arranged <- TenX_Arranged[! TenX_Arranged$Genes %in% FiltGenes_nonUMAP$Genes, ]
+
+# Generate "legend" plot
+
+pdf("Zhang_10X_Key.pdf", width = 7, height = 7)  
+ggplot(TenX_Arranged, aes_string("Global_tSNE_1" , "Global_tSNE_2", colour = "Cell.Annotation")) +
+            geom_point(size = 1) +
+            scale_color_manual(values = c("darkred", "greenyellow", "forestgreen", "blue", "darkorange", "red", "darkorchid4")) +
+            theme_linedraw() +
+            theme(
+               axis.title = element_blank(),
+               axis.text = element_blank(),
+               panel.grid = element_blank(),
+               aspect.ratio = 1)
+dev.off()
+```
+
+# UMAP Plots - SmartSeq
+```{r}
+# Create Gene Categories
+UMAP_Fail <- sort(FiltGenes[FiltGenes$Fail_Source == "Fail_UMAP", 1])
+UMAP_Fail <- as.character(UMAP_Fail)
+UMAP_Fail <- UMAP_Fail[-c(4)] # keep HAVCR2
+UMAP_Fail <- c(UMAP_Fail, "ADGRG1")
+UMAP_Fail <- sort(UMAP_Fail)
+
+High_DEGs <- c("CLIC3", "CMC1", "GNLY", "GZMB", "HAVCR2", "KIR3DX1", "KLRC1", "LINC00298", "NMUR1", "PTGDR", "SLCO4C1", "TXK", "XCL1")
+
+GoodGenes <- unique(SmartSeq_Arranged$Genes)[! unique(SmartSeq_Arranged$Genes) %in% UMAP_Fail] # 65 genes
+GoodGenes <- GoodGenes[! GoodGenes %in% High_DEGs] # 52 genes
+GoodGenes <- sort(GoodGenes) # 30 genes
+
+# Set factor order
+SmartSeq_Arranged$Genes <- factor(SmartSeq_Arranged$Genes, levels = c(GoodGenes, High_DEGs, UMAP_Fail))
+SmartSeq_Arranged <- SmartSeq_Arranged[order(SmartSeq_Arranged$Genes), ]
+SmartSeq_Arranged$GenesMax <- factor(SmartSeq_Arranged$GenesMax, levels = unique(SmartSeq_Arranged$GenesMax))
+
+#Plots
+p <- SmartSeq_Arranged %>% group_by(GenesMax) %>%
+        do(
+          plots = ggplot(data = .) + aes_string("Global_tSNE_1" , "Global_tSNE_2", colour = "LogExpr") +
+            geom_point() +
+            facet_wrap(~ GenesMax) +
+            scale_color_viridis(option = "inferno", 2, begin = 0.1) +
+            theme_linedraw() +
+            theme(
+               legend.position = "none",
+               axis.title = element_blank(),
+               axis.text = element_blank(),
+               strip.text = element_text(size = 12),
+               strip.background = element_rect("darkblue"),
+               panel.grid = element_blank()))
+
+glist <- lapply(p$plots, ggplotGrob)
+
+#png("July2022_Zhang_SMART-SeqUMAPs.png", width = 1300, height = 1560)
+ggarrange(plotlist = glist[c(1:2, 1:5, 1:2, 6:13, 14:52)], ncol = 7, nrow = 8)
+dev.off()
+
+# Generate just the plots needed for figure:
+FigGenes <-  c("NCAM1", "PRSS57", "RNF165", "KIR3DL1", "NCR1", "SPTSSB", "CXCR1", "LINGO2")
+
+SS_ArrangedSub <- SmartSeq_Arranged[SmartSeq_Arranged$Genes %in% FigGenes, ]
+SmartSeq_Arranged$Genes <- factor(SmartSeq_Arranged$Genes, levels = FigGenes)
+
+p2 <- SS_ArrangedSub %>% group_by(GenesMax) %>%
+        do(
+          plots = ggplot(data = .) + aes_string("Global_tSNE_1" , "Global_tSNE_2", colour = "LogExpr") +
+            geom_point() +
+            facet_wrap(~ GenesMax) +
+            scale_color_viridis(option = "inferno", 2, begin = 0.1) +
+            theme_linedraw() +
+            theme(
+               legend.position = "none",
+               axis.title = element_blank(),
+               axis.text = element_blank(),
+               strip.text = element_text(size = 12),
+               strip.background = element_rect("darkblue"),
+               panel.grid = element_blank()))
+
+glist <- lapply(p2$plots, ggplotGrob)
+
+#pdf("July2022_Zhang_SMART-SeqUMAPs_Fig3.pdf", width = 8, height = 4) #, res = 300)
+ggarrange(plotlist = glist[c(1:4, 5:8)], ncol = 4, nrow = 2)
+dev.off()
+
+```
+
+# UMAP Plots - 10X
+```{r}
+# Apply Gene Categories
+GoodGenes_10X <- unique(TenX_Arranged$Genes)[! unique(TenX_Arranged$Genes) %in% UMAP_Fail] # 40 genes
+GoodGenes_10X <- GoodGenes_10X[! GoodGenes_10X %in% High_DEGs] # 28 genes
+GoodGenes_10X <- sort(GoodGenes_10X) # 28 genes
+
+# Set factor order
+TenX_Arranged$Genes <- factor(TenX_Arranged$Genes, levels = c(GoodGenes_10X, High_DEGs, UMAP_Fail))
+TenX_Arranged <- TenX_Arranged[order(TenX_Arranged$Genes), ]
+TenX_Arranged$GenesMax <- factor(TenX_Arranged$GenesMax, levels = unique(TenX_Arranged$GenesMax))
+
+unique(TenX_Arranged$GenesMax)
+
+p <- TenX_Arranged %>% group_by(GenesMax) %>%
+        do(
+          plots = ggplot(data = .) + aes_string("Global_tSNE_1" , "Global_tSNE_2", colour = "LogExpr") +
+            geom_point() +
+            facet_wrap(~ GenesMax) +
+            scale_color_viridis(option = "inferno", 2, begin = 0.1) +
+            theme_linedraw() +
+            theme(
+               legend.position = "none",
+               axis.title = element_blank(),
+               axis.text = element_blank(),
+               strip.text = element_text(size = 12),
+               strip.background = element_rect("dodgerblue"),
+               panel.grid = element_blank()))
+
+glist <- lapply(p$plots, ggplotGrob)
+
+#png("Zhang_10X_UMAPs_LightBlue.png", width = 1300, height = 1560)
+ggarrange(plotlist = glist[c(1:2, 1:5, 1:2, 6:13, 14:47)], ncol = 7, nrow = 8)
+dev.off()
+
+# Generate just the plots needed for figure:
+FigGenes <-  c("NCAM1", "PRSS57", "RNF165", "KIR3DL1", "NCR1", "SPTSSB", "CXCR1", "LINGO2")
+
+TenX_ArrangedSub <- TenX_Arranged[TenX_Arranged$Genes %in% FigGenes, ]
+TenX_Arranged$Genes <- factor(TenX_Arranged$Genes, levels = FigGenes)
+
+p2 <- TenX_ArrangedSub %>% group_by(GenesMax) %>%
+        do(
+          plots = ggplot(data = .) + aes_string("Global_tSNE_1" , "Global_tSNE_2", colour = "LogExpr") +
+            geom_point() +
+            facet_wrap(~ GenesMax) +
+            scale_color_viridis(option = "inferno", 2, begin = 0.1) +
+            theme_linedraw() +
+            theme(
+               legend.position = "none",
+               axis.title = element_blank(),
+               axis.text = element_blank(),
+               strip.text = element_text(size = 12),
+               strip.background = element_rect("darkblue"),
+               panel.grid = element_blank()))
+
+glist <- lapply(p2$plots, ggplotGrob)
+
+pdf("July2022_Zhang_TenXUMAPs_Fig3.pdf", width = 8, height = 4) #, res = 300)
+ggarrange(plotlist = glist[c(1:4, 5:8)], ncol = 4, nrow = 2)
+dev.off()
+```
+

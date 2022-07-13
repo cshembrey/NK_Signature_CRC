@@ -1,0 +1,226 @@
+---
+title: "Kaplan-Meier Curves - NK Score"
+author: "C Shembrey S Foroutan"
+date: "19/11/2020"
+output: html_document
+---
+In this document, we take the NK scores (generated in previous markdown) for the TCGA and Marisa et al., datasets and perform survival analysis to determine whether high NK score is associated with any survival outcomes.
+
+# First, we read in a csv file where survival outcomes for the TCGA patients and their NK scores have been merged, as well 
+```{r}
+library(survival)
+library(survminer)
+library(ggplot2)
+
+TCGABind <- read.csv("./data/TCGABind_ForSurvivalAnalysis.csv", stringsAsFactors = F, row.names = "X") 
+
+# read in Clinical annot
+ClinAnnot <- read.csv("../data/KeyData/TCGA/TCGA-COAD_ClinicalReponseAnnot.csv", stringsAsFactors = F)
+ClinAnnot$bcr_patient_barcode <-  gsub("-", ".", ClinAnnot$bcr_patient_barcode)
+summary(rownames(TCGABind) %in% ClinAnnot$bcr_patient_barcode) # 454/454 true
+rownames(ClinAnnot) <- ClinAnnot$bcr_patient_barcode
+ClinAnnot <- ClinAnnot[rownames(TCGABind), ] # shrink to 454 common samples
+TCGABind <- cbind(TCGABind, ClinAnnot[ , c(3,4,25:32)])
+TCGABind[ , c(29:36)] <- lapply(TCGABind[ , c(29:36)], as.numeric) # time variables
+
+# We remove the Stage IV patients, as metastatic disease should not be grouped together with primary disease for survival analysis:
+TCGABind_noIV <- TCGABind[!TCGABind$tumor_stage == "Stage IV", ]
+
+# group the patients according to whether their NK score is above or below the median NK score for the cohort
+median(TCGABind_noIV$NKUp, na.rm = T) # -0.3944445
+TCGABind_noIV$NKScore_SplitMed <- TCGABind_noIV$NKUp
+TCGABind_noIV$NKScore_SplitMed <- ifelse(TCGABind_noIV$NKScore_SplitMed > -0.394445, "NK.High", "NK.Low")
+
+```
+
+# Genmerate Kaplan-Meier curves for NK High vs Low sample groupings in TCGA data
+```{r fig.width=20}
+
+# TCGA NK Score
+  # median(TCGABind$NKUp, na.rm = T) # -0.3956979
+  # TCGABind$NKScore_SplitMed <- TCGABind$NKUp
+  # TCGABind$NKScore_SplitMed <- ifelse(TCGABind$NKScore_SplitMed > -0.3956979, "NK.High", "NK.Low")
+
+# Unstaged
+TCGAfit_OS <- survfit(Surv(OS.time, OS)~NKScore_SplitMed , data = TCGABind_noIV)
+TCGAfit_PFI <- survfit(Surv(PFI.time, PFI)~NKScore_SplitMed , data = TCGABind_noIV)
+TCGAfit_DFI <- survfit(Surv(DFI.time, DFI)~NKScore_SplitMed , data = TCGABind_noIV[complete.cases(TCGABind_noIV$DFI), ])
+
+# FIGURES FOR THESIS
+#pdf("Kaplan-Meier_Curves_TCGA_NKScore.pdf", width = 10, height = 8)
+ggsurvplot(TCGAfit_OS, data = TCGABind_noIV,
+                  #facet.by = "tumor_stage",
+           conf.int = F,
+           pval = T,
+           risk.table = T,
+           palette = c("darkred", "blue")) +  ggtitle("Shembrey NK Score / TCGA-COAD (OS) \n NK-High = above median NK score, NK-Low = below median NK Score")
+
+ggsurvplot(TCGAfit_PFI, data = TCGABind_noIV,
+                  #facet.by = "tumor_stage",
+           conf.int = F,
+           pval = T,
+           risk.table = T,
+           palette = c("darkred", "blue")) +  ggtitle("Shembrey NK Score / TCGA-COAD (PFI) \n NK-High = above median NK score, NK-Low = below median NK Score")
+
+ggsurvplot(TCGAfit_DFI, data = TCGABind_noIV,
+                  #facet.by = "tumor_stage",
+           conf.int = F,
+           pval = T,
+           risk.table = T, 
+           palette = c("darkred", "blue")) +  ggtitle("Shembrey NK Score / TCGA-COAD (DFI) \n NK-High = above median NK score, NK-Low = below median NK Score")
+dev.off()
+```
+
+# Calculate significance using Lasso (for TCGA):
+```{r}
+## Define survival parameters:
+timeCol <- "DFI.time"
+eventCol <- "DFI"
+
+## subset your annotation data to columns you want to use (all clinical factors of interests as well as survivlal outcome)
+## I am also removing all the normal samples
+Annot_ForLasso <-
+  TCGABind_noIV[ , c("age_at_initial_pathologic_diagnosis",
+                       "tumor_stage",
+                       "Subtype_MSI_Status",
+                        "NKScore_SplitMed",
+                       timeCol,
+                       eventCol
+                     )]
+
+## make sure you don't have NA in the data and that you survival time is > 0. 
+Annot_ForLasso <- Annot_ForLasso[complete.cases(Annot_ForLasso) &
+                                             Annot_ForLasso[, timeCol] > 0,]
+
+## get columns only for the predictors (clinical variables) by removing survival columns
+pred <- Annot_ForLasso[,!colnames(Annot_ForLasso) %in% c(timeCol, eventCol)]
+## make the class of the predictors appropriate for the glmnet function; 
+## you need to add the column names of all the clinical factors here
+x <- model.matrix(~ age_at_initial_pathologic_diagnosis + tumor_stage + Subtype_MSI_Status, pred)
+
+## define output data, this is survival data and has to have the below column names
+y <- as.matrix(Annot_ForLasso[, c(timeCol, eventCol)])
+colnames(y) <- c("time", "status")
+
+## run glmnet for lasso, we then look at the plot
+library(glmnet)
+fit <- glmnet(
+  x = x, 
+  y = y, 
+  family = "cox",
+  alpha = 1)
+
+plot(fit, label = T)
+
+## perform cross validation for to obtain coef for the variables at min lambda
+cv.fit <- cv.glmnet(x, 
+                    y, 
+                    family = "cox", 
+                    alpha = 1)
+plot(cv.fit)
+
+## We need to include the variables in the Cox model, if we have non-zero (non-dot) for any of the elements of a given variable.
+coef(cv.fit, s = "lambda.min")
+
+## Then run coxph by only including the variables significant in the above test as well as your NK signature: 
+coxph(
+  Surv(
+    as.numeric(Annot_ForLasso[, timeCol]),
+    as.numeric(Annot_ForLasso[, eventCol])
+  ) ~
+    age_at_initial_pathologic_diagnosis + tumor_stage + Subtype_MSI_Status + NKScore_SplitMed,
+  data = Annot_ForLasso
+)
+
+```
+# Generate Kaplan-Meier curves for Marisa Data
+```{r fig.height = 8, fig.width = 10}
+Marisa <- read.csv("./data/Marisa_ForSurvivalAnalysis.csv", row.names = "X", stringsAsFactors = F) # there is RFS event/delay and OS event/delay IN MONTHS
+Marisa[ , c(14:17)] <- lapply(Marisa[ , c(14:17)], as.numeric) # time variables
+Marisa <- Marisa[! Marisa$TNM_Stage == "0", ]
+
+# Marisa NK Score
+    # median(Marisa$NKUp, na.rm = T) # -0.3853625
+    # Marisa$NKScore_SplitMed <- Marisa$NKUp
+    # Marisa$NKScore_SplitMed <- ifelse(Marisa$NKScore_SplitMed > -0.3853625, "NK.High", "NK.Low")
+
+# remove stage IV samples with RFS = 0
+tt <- Marisa[Marisa$TNM_Stage == "4", ] # subset to stage IV
+tt <- tt[tt$RFS_Delay == "0", ]
+Marisa_noIV <- Marisa[! rownames(Marisa) %in% rownames(tt), ]
+
+median(Marisa_noIV$NKUp, na.rm = T) # -0.38494
+Marisa_noIV$NKScore_SplitMed <- Marisa_noIV$NKUp
+Marisa_noIV$NKScore_SplitMed <- ifelse(Marisa_noIV$NKScore_SplitMed > -0.38494, "NK.High", "NK.Low")
+
+# Unstaged
+MarisaFit_OS <- survfit(Surv(OS_Delay, OS_Event)~NKScore_SplitMed , data = Marisa_noIV) #+ TNM_Stage
+MarisaFit_RFS <- survfit(Surv(RFS_Delay, RFS_Event)~NKScore_SplitMed , data = Marisa_noIV) #+ TNM_Stage
+
+MarisaFit_RFS2 <- survfit(Surv(RFS_Delay, RFS_Event)~NKScore_SplitMed , data = Marisa_noIV) #+ TNM_Stage
+
+#pdf("Marisa_OS_RFS_ForThesis.pdf", width = 10, height=10) # need to remove Stage IV patients
+ggsurvplot(MarisaFit_RFS2, data = Marisa_noIV,
+                  #facet.by = "tumor_stage",
+           conf.int = F,
+           pval = T,
+           palette = c("darkred", "blue"),
+           risk.table = T) +  
+           ggtitle("NK Score / Marisa (RFS) \n NK-High = above median NK score, NK-Low = below median NK Score")
+
+ggsurvplot(MarisaFit_OS, data = Marisa_noIV,
+                  #facet.by = "tumor_stage",
+           conf.int = F,
+           pval = T,
+           palette = c("darkred", "blue"),
+           risk.table = T) +  
+           ggtitle("NK Score / Marisa (OS) \n NK-High = above median NK score, NK-Low = below median NK Score")
+dev.off()
+
+```
+
+# Calculate Cox P-values, controlling for age and tumour stage and MSI status
+```{r}
+TCGABind_noIV$age_at_initial_pathologic_diagnosis <- as.numeric(TCGABind_noIV$age_at_initial_pathologic_diagnosis)
+
+median(TCGABind_noIV$age_at_initial_pathologic_diagnosis, na.rm = T) # 69
+
+TCGABind_noIV$BinaryAge <- TCGABind_noIV$age_at_initial_pathologic_diagnosis
+TCGABind_noIV$BinaryAge <- ifelse(TCGABind_noIV$BinaryAge > 69, "Old", "Young")
+TCGABind_noIV$BinaryAge <- as.factor(TCGABind_noIV$BinaryAge)
+
+TCGABind_noIV$BinaryMSI <- TCGABind_noIV$Subtype_MSI_Status
+TCGABind_noIV$BinaryMSI <- ifelse(TCGABind_noIV$BinaryMSI == "MSI-H", "MSI", "MSS")
+TCGABind_noIV$BinaryMSI <- as.factor(TCGABind_noIV$BinaryMSI)
+
+res.coxTCGA <- coxph(Surv(DFI.time, DFI) ~ NKScore_SplitMed + tumor_stage +  BinaryAge + BinaryMSI, data =  TCGABind_noIV) # BinaryMSI #gender
+summary(res.coxTCGA)
+
+res.coxTCGA <- coxph(Surv(PFI.time, PFI) ~ NKScore_SplitMed + tumor_stage +  BinaryAge + BinaryMSI, data =  TCGABind_noIV) # BinaryMSI #gender
+summary(res.coxTCGA)
+
+res.coxTCGA <- coxph(Surv(OS.time, OS) ~ NKScore_SplitMed + tumor_stage +  BinaryAge + BinaryMSI, data =  TCGABind_noIV) # BinaryMSI #gender
+summary(res.coxTCGA)
+
+res.coxTCGA <- coxph(Surv(DFI.time, DFI) ~ NKScore_SplitMed + tumor_stage +  BinaryAge + BinaryMSI, data =  TCGABind_noIV) # BinaryMSI #gender
+summary(res.coxTCGA)
+
+res.coxTCGA <- coxph(Surv(PFI.time, PFI) ~ NKScore_SplitMed + tumor_stage +  BinaryAge + BinaryMSI, data =  TCGABind_noIV) # BinaryMSI #gender
+summary(res.coxTCGA)
+
+Marisa_noIV$AgeAtDiagnosis <- as.numeric(Marisa_noIV$AgeAtDiagnosis)
+median(Marisa_noIV$AgeAtDiagnosis, na.rm = T) # 69
+Marisa_noIV$BinaryAge <- Marisa_noIV$AgeAtDiagnosis
+Marisa_noIV$BinaryAge <- ifelse(Marisa_noIV$BinaryAge > 69, "Old", "Young")
+Marisa_noIV$BinaryAge <- as.factor(Marisa_noIV$BinaryAge)
+
+Marisa_noIV$MMR_Status[Marisa_noIV$MMR_Status == "N/A"] <- NA
+Marisa_noIV$MMR_Status <- as.factor(Marisa_noIV$MMR_Status)
+res.coxMarisa <- coxph(Surv(RFS_Delay, RFS_Event) ~ NKScore_SplitMed + TNM_Stage + BinaryAge + MMR_Status, data =  Marisa_noIV)
+summary(res.coxMarisa)
+
+res.coxMarisa <- coxph(Surv(OS_Delay, OS_Event) ~ NKScore_SplitMed + TNM_Stage + BinaryAge + MMR_Status, data =  Marisa_noIV)
+summary(res.coxMarisa)
+
+table(Marisa_noIV$MMR_Status)
+```

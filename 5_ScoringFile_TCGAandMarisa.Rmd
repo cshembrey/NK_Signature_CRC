@@ -1,0 +1,694 @@
+---
+title: "Assessing NK cell signature expression in TCGA-COAD and GSE39582 (Marisa et al.,) primary CRC datasets"
+author: "C Shembrey S Foroutan"
+date: "24/03/2020"
+output: html_document
+---
+
+In this document, we will assess NK cell signature expression using the Singscore gene set ranking method (Foroutan et al., 2018, BMC Bipinformatics: https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2435-4) in TCGA-COAD and GSE39582 (Marisa et al.,) primary CRC datasets
+
+# Setup
+```{r results = 'hide', message = FALSE, warning = FALSE}
+library(singscore)  ## for scoring
+library(DT)         ## tables / optional
+library(dplyr)      ## %>%
+library(biomaRt)    
+library(RColorBrewer)
+library(ggplot2)
+library(gridExtra)
+library(grid)
+library(naniar)
+library(edgeR)
+library(plotly)
+library(ggsci)
+library(ggpubr)
+library(limma)
+library(matrixStats)
+
+source("./script/RLE_ggplot.R")
+currentDate <- Sys.Date()
+MyCols <- c("blue", "darkred", "darkorange", "forestgreen", "darkorchid4", "salmon")
+```
+
+# First, import the finalised NK cell signature
+```{r}
+NKSig <- read.csv("./data/NK_Signature.csv", stringsAsFactors = F, na.strings = "")
+
+# map EntrezGene IDs
+NKSig <- alias2SymbolUsingNCBI(NKSig$NKSig_AllGenes, "../data/Homo_sapiens.gene_info", required.columns = c("GeneID","Symbol"))
+rownames(NKSig) <- NKSig$GeneID
+```
+
+# Next, import data from TCGA-COAD and GSE39582
+```{r}
+# TCGA 
+COAD_TCGA <- read.csv("../data/KeyData/TCGA/DGEList_Filtered_TCGA_COAD_ForCarolyn_LogRPKM.csv", stringsAsFactors = F)
+TCGA_IDs <- alias2SymbolUsingNCBI(COAD_TCGA$X, "../data/Homo_sapiens.gene_info", required.columns = c("GeneID","Symbol"))
+COAD_TCGA <- cbind(TCGA_IDs, COAD_TCGA)
+COAD_TCGA <- COAD_TCGA[! duplicated(COAD_TCGA$GeneID) & complete.cases(COAD_TCGA$GeneID), ]
+rownames(COAD_TCGA) <- COAD_TCGA$GeneID
+COAD_TCGA <- COAD_TCGA[ , -c(1:3)] 
+
+# TCGA Annotations (updated and cleaned for the new data - see previous Scoring .Rmd files for code)
+Coad_Annot <- readRDS("../data/KeyData/TCGA/COAD_Annot_CleanedByCS.RDS")
+
+# Marisa CRC
+Marisa <- read.csv("../data/KeyData/Marisa_CRC/MarisaCounts_FilteredforScoring.csv", stringsAsFactors = F)
+rownames(Marisa) <- Marisa$X
+Marisa <- Marisa[ , -c(1)]
+
+# Marisa Annot
+MarisaAnnot <- read.csv("../data/KeyData/Marisa_CRC/MarisaAnnot_GSE39582.csv", stringsAsFactors = F)
+all(MarisaAnnot$GEO_Accession == colnames(Marisa))
+rownames(MarisaAnnot) <- MarisaAnnot$GEO_Accession
+
+# remove the matched normal samples:
+Nrm <- MarisaAnnot[MarisaAnnot$SampleType == "non tumoral colorectal mucosa", ]
+MarisaAnnot <- MarisaAnnot[! rownames(MarisaAnnot) %in% rownames(Nrm), ]
+Marisa <- Marisa[ , ! colnames(Marisa) %in% rownames(Nrm)]
+```
+
+# We will now score each sample from within the two datasets according to their expression of the NK cell signature, where a higher NK score indicates higher expression of the NK cell signature. 
+```{r}
+# First, rank the genes in each dataset according to their expression
+rankedMarisa <- rankGenes(expreMatrix = Marisa)
+rankedCOAD_TCGA <- rankGenes(expreMatrix = COAD_TCGA)
+
+# ---------- COAD_TCGA
+TCGA_Score <-  simpleScore(
+  rankData = rankedCOAD_TCGA,
+  upSet = NKSig$GeneID)[, "TotalScore", drop = F]
+
+# bind the new scores to the annotation column:
+TCGABind <- data.frame(TCGA_Score, Coad_Annot) 
+
+# ---------- Marisa
+Marisa_Score <- simpleScore(
+  rankData = rankedMarisa,
+  upSet = NKSig$GeneID)[, "TotalScore", drop = F]
+
+MarisaBind <- data.frame(Marisa_Score, MarisaAnnot) 
+```
+
+# Generate plots for the TCGA data (used in Figure 7 and Figure S9)
+
+## First, interrogate NK score by tumour stage (Figure S9A)
+```{r fig.height=4, fig.width = 8}
+TCGABind[ TCGABind == "NA" ] <- NA
+TCGABind$histological_type <- factor(TCGABind$histological_type, levels = c("Non-Mucinous", "Mucinous"))
+TCGABind$tumor_stage <- factor(TCGABind$tumor_stage, levels = c("Stage I", "Stage II", "Stage III", "Stage IV"))
+TCGABind <- droplevels.data.frame(TCGABind)
+TCGABind$Subtype_MSI_Status <- factor(TCGABind$Subtype_MSI_Status, exclude = "MSI-L")
+#write.csv(TCGABind[ , -c(32)], "201119_TCGABind_ForSurvivalAnalysis.csv") # remove treatment list column
+
+# NK Score by tumour stage in TCGA data 
+my_comparisons <- list(c("Stage I", "Stage IV"), c("Stage II", "Stage IV"), c("Stage IV", "Stage III"))
+    
+ggplot(TCGABind[! is.na(TCGABind$tumor_stage), ],
+  aes_string(y="TotalScore", x="tumor_stage", fill = "tumor_stage")) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(x = "tumor_stage", y = "TotalScore") +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = "tumor_stage")) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  ggtitle("TCGA COAD Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), axis.text.x = element_blank(), axis.title.x = element_blank())
+```
+
+# Next, generate plots using categorical clinical and/or molecular variables such as MSI status (used in Figure 7 and S9) in the TCGA data
+```{r}
+TCGALoop.Stg <- colnames(TCGABind)[c(1)] 
+
+p <- list()
+
+for (i in TCGALoop.Stg) {
+  my_comparisons <- list(c("Stage I", "Stage IV"), c("Stage II", "Stage IV"), c("Stage IV", "Stage III"))
+    
+p[[i]] <- (ggplot(TCGABind[! is.na(TCGABind$tumor_stage), ],
+  aes_string(y=i, x="tumor_stage", fill = "tumor_stage"))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(x = "tumor_stage", y = i) +
+  #geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = "tumor_stage")) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  ggtitle("TCGA COAD Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), axis.text.x = element_blank(), axis.title.x = element_blank())
+}
+
+p2 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in TCGALoop.Stg) {
+  j <- "methylation_subtype"
+  d <- TCGABind[complete.cases(TCGABind$methylation_subtype), ]
+  my_comparisons <- list(c("CIMP.H", "CIMP.L"))
+    
+p2[[i]] <- (ggplot(d[! is.na(d$tumor_stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(x = j, y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ tumor_stage, ncol = 4, drop = T) +
+  ggtitle("TCGA COAD Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank())
+}
+
+p3 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in TCGALoop.Stg) {
+  j <- "Subtype_MSI_Status"
+  d <- TCGABind[complete.cases(TCGABind$Subtype_MSI_Status), ]
+  my_comparisons <- list(c("MSI-H", "MSS"))
+    
+p3[[i]] <- (ggplot(d[! is.na(d$tumor_stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ tumor_stage, ncol = 4, drop = T) +
+  ggtitle("TCGA COAD Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank())
+}
+
+p4 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in TCGALoop.Stg) {
+  j <- "MLH1_silencing"
+  d <- TCGABind[complete.cases(TCGABind$MLH1_silencing), ]
+  my_comparisons <- list(c("0", "1"))
+    
+p4[[i]] <- (ggplot(d[! is.na(d$tumor_stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ tumor_stage, ncol = 4, drop = T) +
+  ggtitle("TCGA COAD Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank())
+}
+
+p5 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in TCGALoop.Stg) {
+  j <- "expression_subtype"
+  d <- TCGABind[complete.cases(TCGABind$expression_subtype), ]
+  my_comparisons <- list(c("CIN", "Invasive"), c("CIN", "MSI/CIMP"), c("Invasive", "MSI/CIMP"))
+    
+p5[[i]] <- (ggplot(d[! is.na(d$tumor_stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ tumor_stage, ncol = 4, drop = T) +
+  ggtitle("TCGA COAD Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank())
+}
+
+p6 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in TCGALoop.Stg) {
+  j <- "hypermutated"
+  d <- TCGABind[complete.cases(TCGABind$hypermutated), ]
+  my_comparisons <- list(c("0", "1"))
+    
+p6[[i]] <- (ggplot(d[! is.na(d$tumor_stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ tumor_stage, ncol = 4, drop = T) +
+  ggtitle("TCGA COAD Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank())
+}
+
+p7 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in TCGALoop.Stg) {
+  j <- "histological_type"
+  d <- TCGABind[complete.cases(TCGABind$histological_type), ]
+  my_comparisons <- list(c("Non-Mucinous", "Mucinous"))
+    
+p7[[i]] <- (ggplot(d[! is.na(d$tumor_stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ tumor_stage, ncol = 4, drop = T) +
+  ggtitle("TCGA COAD Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank())
+}
+
+p8 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in TCGALoop.Stg) {
+  j <- "prior_diagnosis"
+  d <- TCGABind[complete.cases(TCGABind$prior_diagnosis), ]
+  my_comparisons <- list(c("NO", "YES"))
+    
+p8[[i]] <- (ggplot(d[! is.na(d$tumor_stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ tumor_stage, ncol = 4, drop = T) +
+  ggtitle("TCGA COAD Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank())
+}
+
+p9 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in TCGALoop.Stg) {
+  j <- "synchronous_colon_cancer_present"
+  d <- TCGABind[complete.cases(TCGABind$synchronous_colon_cancer_present), ]
+  my_comparisons <- list(c("NO", "YES"))
+    
+p9[[i]] <- (ggplot(d[! is.na(d$tumor_stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ tumor_stage, ncol = 4, drop = T) +
+  ggtitle("TCGA COAD Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank())
+}
+
+pdfFileName <- paste(currentDate, "_TCGA_ScoringBoxPlots_Unstaged",".pdf", sep="")
+#pdf(pdfFileName, width = 10, height = 8, useDingbats = F)
+do.call(grid.arrange, p)
+do.call(grid.arrange, p2)
+do.call(grid.arrange, p3)
+do.call(grid.arrange, p4)
+do.call(grid.arrange, p5)
+do.call(grid.arrange, p6)
+do.call(grid.arrange, p7)
+do.call(grid.arrange, p8)
+do.call(grid.arrange, p9)
+dev.off()
+```
+# Repeat the same analysis with the GSE39582 data
+```{r fig.height=8, fig.width = 6}
+# first, clean up the annotation file
+MarisaLoop <- colnames(MarisaBind)[c(1)]
+MarisaBind$TNM_Stage <- as.factor(MarisaBind$TNM_Stage)
+MarisaBind$TNM_Stage <- factor(MarisaBind$TNM_Stage, exclude = c("N/A", "0"))
+MarisaBind$TNM_Stage <- gsub("1", "Stage I", MarisaBind$TNM_Stage)
+MarisaBind$TNM_Stage <- gsub("2", "Stage II", MarisaBind$TNM_Stage)
+MarisaBind$TNM_Stage <- gsub("3", "Stage III", MarisaBind$TNM_Stage)
+MarisaBind$TNM_Stage <- gsub("4", "Stage IV", MarisaBind$TNM_Stage)
+MarisaBind$TumLocation <- factor(MarisaBind$TumLocation, exclude = "N/A")
+MarisaBind$MMR_Status <- factor(MarisaBind$MMR_Status, levels = c("pMMR", "dMMR", "N/A"))
+MarisaBind$MMR_Status <- factor(MarisaBind$MMR_Status, exclude = "N/A")
+MarisaBind$OS_Event <- factor(MarisaBind$OS_Event, exclude = "N/A")
+MarisaBind$TP53_Status <- factor(MarisaBind$TP53_Status, exclude = "N/A")
+MarisaBind$CIMP_Status <- factor(MarisaBind$CIMP_Status, exclude = "N/A")
+MarisaBind$CIN_Status <- factor(MarisaBind$CIN_Status, exclude = "N/A")
+MarisaBind$KRAS_Mutation <- factor(MarisaBind$KRAS_Mutation, exclude = "N/A")
+MarisaBind$BRAF_Mutation <- factor(MarisaBind$BRAF_Mutation, exclude = "N/A")
+
+# Generate plot of NK score by tumour stage
+p <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in MarisaLoop) {
+  my_comparisons <- list(c("Stage I", "Stage IV"), c("Stage II", "Stage IV"), c("Stage IV", "Stage III"))
+    
+p[[i]] <- (ggplot(MarisaBind,
+  aes_string(y=i, x="TNM_Stage", fill = "TNM_Stage"))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(x = "TNM_Stage", y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = "TNM_Stage")) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  ggtitle("Marisa Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), axis.text.x = element_blank(), axis.title.x = element_blank())
+}
+
+#  Next, generate plots using categorical clinical and/or molecular variables such as MSI status (used in Figure 7 and S8) 
+p1 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in MarisaLoop) {
+  my_comparisons <- list(c("Stage I", "Stage IV"), c("Stage II", "Stage IV"), c("Stage IV", "Stage III"))
+    
+p1[[i]] <- (ggplot(MarisaBind,
+  aes_string(y=i, x="TNM_Stage", fill = "TNM_Stage"))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(x = "TNM_Stage", y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = "TNM_Stage")) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  ggtitle("Marisa Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), axis.text.x = element_blank(), axis.title.x = element_blank())
+}
+
+p2 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in MarisaLoop) {
+  j <- "TumLocation"
+  d <- TCGABind[complete.cases(MarisaBind$TumLocation), ]
+  my_comparisons <- list(c("distal", "proximal"))
+    
+p2[[i]] <- (ggplot(MarisaBind[! is.na(MarisaBind$TNM_Stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(x = j, y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ TNM_Stage, ncol = 4) +
+  ggtitle("Marisa Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank())
+}
+
+p3 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in MarisaLoop) {
+   j <- "CIN_Status "
+  d <- MarisaBind[complete.cases(MarisaBind$CIN_Status ), ]
+  my_comparisons <- list(c("-", "+"))
+    
+p3[[i]] <- ((ggplot(MarisaBind[! is.na(MarisaBind$TNM_Stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ TNM_Stage, ncol = 4, drop = T) +
+  ggtitle("Marisa Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank()))
+}
+
+p4 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in MarisaLoop) {
+  j <- "MMR_Status"
+  d <- MarisaBind[complete.cases(MarisaBind$MMR_Status), ]
+  my_comparisons <- list(c("dMMR", "pMMR"))
+    
+p4[[i]] <- ((ggplot(MarisaBind[! is.na(MarisaBind$TNM_Stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ TNM_Stage, ncol = 4, drop = T) +
+  ggtitle("Marisa Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank()))
+}
+
+p5 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in MarisaLoop) {
+  j <- "OS_Event"
+  d <- MarisaBind[complete.cases(MarisaBind$OS_Event), ]
+  my_comparisons <- list(c("0", "1"))
+    
+p5[[i]] <- ((ggplot(MarisaBind[! is.na(MarisaBind$TNM_Stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ TNM_Stage, ncol = 4, drop = T) +
+  ggtitle("Marisa Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank()))
+}
+
+p7 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in MarisaLoop) {
+  j <- "TP53_Status"
+  d <- MarisaBind[complete.cases(MarisaBind$TP53_Status), ]
+  my_comparisons <- list(c("M", "WT"))
+    
+p7[[i]] <- ((ggplot(MarisaBind[! is.na(MarisaBind$TNM_Stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ TNM_Stage, ncol = 4, drop = T) +
+  ggtitle("Marisa Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank()))
+}
+
+p8 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in MarisaLoop) {
+  j <- "KRAS_Mutation"
+  d <- MarisaBind[complete.cases(MarisaBind$KRAS_Mutation), ]
+  my_comparisons <- list(c("M", "WT"))
+    
+p8[[i]] <- ((ggplot(MarisaBind[! is.na(MarisaBind$TNM_Stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ TNM_Stage, ncol = 4, drop = T) +
+  ggtitle("Marisa Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank()))
+}
+
+p9 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in MarisaLoop) {
+   j <- "BRAF_Mutation"
+  d <- MarisaBind[complete.cases(MarisaBind$BRAF_Mutation), ]
+  my_comparisons <- list(c("M", "WT"))
+    
+p9[[i]] <- ((ggplot(MarisaBind[! is.na(MarisaBind$TNM_Stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ TNM_Stage, ncol = 4, drop = T) +
+  ggtitle("Marisa Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank()))
+}
+
+p10 <- list()
+#for (j in annotCol.TCGA_Stg) { 
+for (i in MarisaLoop) {
+   j <- "CIMP_Status "
+  d <- MarisaBind[complete.cases(MarisaBind$CIMP_Status ), ]
+  my_comparisons <- list(c("-", "+"))
+    
+p10[[i]] <- ((ggplot(MarisaBind[! is.na(MarisaBind$TNM_Stage), ],
+  aes_string(y=i, x=j, fill = j))) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  labs(y = i) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.1), size = 3, aes_string(color = j)) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  #facet_wrap(~ TNM_Stage, ncol = 4, drop = T) +
+  ggtitle("Marisa Data") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light() +
+  theme(legend.position = "bottom", legend.key.size = unit(1.5,"cm"), text = element_text(size=24), strip.background = element_rect(fill = "darkblue"), axis.text.x = element_blank(), axis.title.x = element_blank()))
+}
+
+pdfFileName <- paste(currentDate, "_Marisa_ScoringBoxPlots_Unstaged",".pdf", sep="")
+#pdf(pdfFileName, width = 10, height = 8, useDingbats = F)
+do.call(grid.arrange, p1)
+do.call(grid.arrange, p2)
+do.call(grid.arrange, p3)
+do.call(grid.arrange, p4)
+do.call(grid.arrange, p5)
+do.call(grid.arrange, p7)
+do.call(grid.arrange, p8)
+do.call(grid.arrange, p9)
+do.call(grid.arrange, p10)
+dev.off()
+
+```
+
+## CMS subtyping correlates
+```{r fig.width= 6, fig.height=5}
+library(Biobase)
+library(CMScaller)
+TCGA2 <- read.csv("../data/KeyData/TCGA/DGEList_Filtered_TCGA_COAD_ForCarolyn_LogRPKM.csv", stringsAsFactors = F)
+IDs_TCGA2 <- alias2SymbolUsingNCBI(TCGA2$X, gene.info.file = "../data/Homo_sapiens.gene_info", required.columns = c("GeneID", "Symbol"))
+TCGA2 <- merge(IDs_TCGA2, TCGA2, by.x = "Symbol", by.y = "X")
+TCGA2 <- TCGA2[! duplicated(TCGA2$GeneID), ]
+rownames(TCGA2) <- TCGA2$GeneID
+TCGA2 <-  TCGA2[ , -c(1:2)]
+
+resTCGA2 <- CMScaller(TCGA2, RNAseq=F, doPlot=TRUE)
+#cam <- CMSgsa(emat, class=res$prediction, RNAseq=TRUE)
+
+TCGABind$ID <- rownames(TCGABind)
+resTCGA2$ID <- rownames(resTCGA2)
+
+CMS_TCGA2 <- merge(resTCGA2, TCGABind, by.x = "ID", by.y = "ID")
+CMS_TCGA2 <- CMS_TCGA2[complete.cases(CMS_TCGA2$prediction), ]
+
+my_comparisons <- list(c("CMS1", "CMS2"), c("CMS1", "CMS3"), c("CMS1", "CMS4"))
+
+Q1 <- ggplot(CMS_TCGA2, aes_string(x = "prediction", y = "TotalScore", fill = "prediction")) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.4), size = 3, aes_string(color = "prediction")) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  ggtitle("TCGA Data with CMS Subtyping") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light()
+```
+
+# Generate CMS vs NK score plot for GSE39582 
+```{r}
+Marisa <- read.csv("../data/KeyData/Marisa_CRC/MarisaCounts_FilteredforScoring.csv", stringsAsFactors = F)
+rownames(Marisa) <- Marisa$X
+Marisa <- Marisa[ , -c(1)]
+
+resMarisa <- CMScaller(Marisa, RNAseq=F, doPlot=TRUE)
+#cam <- CMSgsa(emat, class=res$prediction, RNAseq=TRUE)
+
+MarisaBind$ID <- rownames(MarisaBind)
+resMarisa$ID <- rownames(resMarisa)
+
+CMS_Marisa <- merge(resMarisa, MarisaBind, by.x = "ID", by.y = "ID")
+CMS_Marisa <- CMS_Marisa[complete.cases(CMS_Marisa$prediction), ]
+
+# plot
+
+my_comparisons <- list(c("CMS1", "CMS2"), c("CMS1", "CMS3"), c("CMS1", "CMS4"))
+
+Q2 <- ggplot(CMS_Marisa[], aes_string(x = "prediction", y = "TotalScore", fill = "prediction")) +
+  geom_boxplot(alpha=0.5, position = position_dodge2(width = 1, preserve = "single")) +
+    scale_x_discrete(na.translate = F) +
+  geom_jitter(position = position_jitterdodge(jitter.width = 0.4), size = 3, aes_string(color = "prediction")) +
+  stat_compare_means(comparisons = my_comparisons, label = "p.signif", method = "t.test", size = 7) +
+  scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.1))) +
+  ggtitle("Marisa Data with CMS Subtyping") +
+  scale_fill_manual(values = MyCols) +
+  scale_color_manual(values = MyCols) +
+  guides(color = FALSE, size = FALSE) +
+  theme_light()
+
+#pdf("CMS_vs_NK-Score_May2022.pdf")
+Q1
+Q2
+dev.off()
+```

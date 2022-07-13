@@ -1,0 +1,228 @@
+---
+title: "Complex Heatmap - Genes that Fail Tumour Filtration Biplots"
+author: "C Shembrey"
+date: "2/7/20"
+output: html_document
+---
+
+# In this document, we will first confirm whether our NK signature genes are selective for a particular NK cell subtype (i.e CD56 bright vs dim) or anatomical origin (i.e blood vs spleen)
+
+# Setup
+```{r}
+library(limma)
+library(DT)
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(ComplexHeatmap)
+library(pheatmap)
+```
+
+# Begin by reading in the most recent version of the NK signature (has been filtered against immune cells, tumour cells, stromal cells)
+```{r}
+NKUpSet <- read.table("../NK_candidates_Zhang_SMARTseq_10X_sc_bulk_Shembrey_Foroutan.txt", sep = "\t", header = T)
+FailGenes <- read.csv("../data/NK_Signatures/Post_scRNAseq_TumStrmFIlt.csv")
+FailGenes <- FailGenes[-c(35), ] # keep HAVCR2
+NKUpSet <- NKUpSet[! NKUpSet$Genes %in% FailGenes$Genes, ]
+
+# Map IDs
+NKUpSet <- alias2SymbolUsingNCBI(NKUpSet$Genes, "../data/Homo_sapiens.gene_info", required.columns = c("GeneID", "Symbol"))
+rownames(NKUpSet) <- NKUpSet$GeneID
+```
+
+#  Read in data from GSE133383 (Farber et al., bulk RNAseq), which contains NK cells isolated from different anatomical sites and have been phenotyped for CD56 expression and generate Figure 4A
+```{r fig.height=25}
+Farber <- readRDS("../data/KeyData/blood_nk/FarberData.RDS")
+Farber_NKSig <- Farber$exprData[rownames(Farber$exprData) %in% NKUpSet$Symbol, ]
+# these genes do not present in the data: "KIR2DS4"     "WIPF3"       "ANKRD20A11P" "LINC00298"   "LINC01451"
+
+FarberAnnot <- Farber$annotData
+
+htmp_NKSubsets <- HeatmapAnnotation(df = FarberAnnot[ , "Subset", drop = F],
+   col = list(
+   Subset = c(
+   "CD56brightCD16-" = "purple",
+   "CD56dimCD16+" = "orange")))
+
+htmp_NKSources <- HeatmapAnnotation(df = FarberAnnot[ , "Source", drop = F],
+   col = list(
+   Source = c(
+   "Blood" = "darkred",
+   "BM" = "blue",
+   "LN" = "forestgreen",
+   "Lung" = "salmon",
+   "Spleen" = "gold1")))
+
+library(viridis)
+htmp_Farber <- ComplexHeatmap::Heatmap(Farber_NKSig,
+  col = inferno(40),
+  name = "Farber",
+  column_title = "Stromal Cells",
+  cluster_rows = T,
+  cluster_columns = T,
+  show_row_names = T,
+  show_column_names = F,
+  top_annotation = c(htmp_NKSubsets, htmp_NKSources),
+  na_col = "gray90"
+) 
+
+# Generate Figure 4A
+#pdf("FarberHeatmap_Skinny.pdf", width = 6, height = 10)
+draw(htmp_Farber)
+dev.off()
+```
+
+# Generate a correlation plots grouped by CD56 bright vs dim expression (Figure 4B)
+```{r fig.width=10, fig.height=10}
+CorVals_NKs <- cor(t(Farber_NKSig))
+round(CorVals_NKs, 2)
+
+NKUpSet$SubsetExpr <- NA
+Equal <- c("RNF165", "ENPP5", "PTGDR", "CMC1", "TXK", "SLFN13", "KRT86", "GNLY", "GRIK4")
+UpCD56bright <- c("NCAM1", "ADGRG3", "KLRC1", "SPTSSB", "KLRC2", "XCL1")
+NKUpSet$SubsetExpr[NKUpSet$Symbol %in% Equal] <- "Equal"
+NKUpSet$SubsetExpr[NKUpSet$Symbol %in% UpCD56bright] <- "UpCD56bright"
+NKUpSet$SubsetExpr[is.na(NKUpSet$SubsetExpr)] <- "UpCD56dim"
+
+RowAnnot <- NKUpSet[NKUpSet$Symbol %in% colnames(CorVals_NKs), ]
+rownames(RowAnnot) <- RowAnnot$Symbol
+RowAnnot <- RowAnnot[ , -c(1:2), drop = F]
+RowAnnot <- RowAnnot[rownames(CorVals_NKs), , drop = F]
+all(rownames(RowAnnot) == rownames(CorVals_NKs)) # T
+
+my_colour = list(
+    SubsetExpr = c(Equal = "chartreuse3", UpCD56bright = "purple", UpCD56dim = "orange"))
+
+col<- colorRampPalette(c("blue", "white", "darkred"))(20)
+
+#pdf("FarberData_CorPheatmap_withHAVCR2_noLegends.pdf", width = 12, height = 12)
+plot_data_pheatmap <- pheatmap(CorVals_NKs, color = col, clustering_method = "complete", fontsize = 16, border_color = "grey50", angle_col = 90,  annotation_colors = my_colour, main = "Farber Data", annotation_names_row = F, legend = F) #annotation_row = RowAnnot,
+dev.off()
+```
+
+# Generate boxplots showing the expression of each gene in CD56 bright vs dim samples (Figure 4C and Figure S6). This will determine which genes have relatively higher expression in one NK subset versus the other and allow us to generate side annotations for the correlation plot above
+```{r fig.height=10, fig.width=8}
+Farber_NKSig <- t(Farber_NKSig)
+Farber_NKSig <- as.data.frame(Farber_NKSig)
+# append sample subset column
+all(rownames(Farber_NKSig) == rownames(FarberAnnot))
+Farber_NKSig$Subset <- FarberAnnot$Subset
+Farber_NKSig$Sample <- rownames(Farber_NKSig)
+
+# long format
+library(reshape2)
+MoltFarber <- melt(Farber_NKSig, id.vars = c("Subset", "Sample"))
+colnames(MoltFarber)[c(3:4)] <-  c("Gene", "Expression")
+
+MoltFarber_Split <- split(MoltFarber, f = as.factor(MoltFarber$Gene), drop = F)
+
+SigLvls <- list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+
+my_comparisons <- list(c("CD56brightCD16-", "CD56dimCD16+"))
+
+library(ggpubr)
+#pdf("Faceted_CD56BrightvsDim_Boxplots.pdf", height = 20, width = 15, useDingbats = F)
+ggplot(MoltFarber, aes(x = Subset, y = Expression, fill = Subset, color = Subset)) + 
+        geom_boxplot(alpha = 0.6, outlier.colour = NA, color = "black") +
+        geom_jitter(width = 0.05, size = 3) +
+        ggtitle("Farber Data - Candidate Gene Expression in CD56 bright vs dim Subsets") +
+        labs(x= NA, y = "Expression (logRPKM)") +
+        scale_fill_manual(values = c("purple", "orange")) +
+        scale_color_manual(values = c("purple", "darkorange")) +
+        scale_y_continuous(expand = expand_scale(mult = c(0.05, 0.2))) +
+        facet_wrap(~Gene, scales = "free_y") +
+        stat_compare_means(comparisons = my_comparisons, label = "p.signif", size = 5) +
+        theme_light() +
+        theme(plot.title = element_text(hjust = 0.5, size = 20), legend.position = "none", axis.text.x = element_text(angle = 90), axis.text.y.left = element_text(size = 16), axis.title.y.left = element_text(size = 16), axis.title.x.bottom = element_blank(), strip.background = element_rect(fill = "black"), aspect.ratio = 1, strip.text = element_text(size = 16))
+#dev.off()
+
+# NB: Replotting without outlier sample makes no difference to groupings "363_LU_I"
+```
+
+# Next, we will check the expressino of our signature in aggregate (i.e as a whole, not looking at individual genes anymore) and determine whether it has ihgher overall expression in NK subsets relative to other immune cell subtypes. For this, we will use the original bulkRNAseq data from sorted human PBMCs described earlier (GSE22886) 
+
+First, import and prepare data for plotting
+```{r fig.width = 30, fig.height = 30}
+# Load some additional packages
+library(plotly)
+library(tidyverse)
+library(htmlwidgets)
+library(ggrepel)
+library(dplyr)
+library(ggstatsplot)
+library(ggplot2)
+
+# Import data from GSE22886
+Xu <-  read.table("../data/KeyData/blood_nk/XuBulk_logTPMFilt.txt", check.names = F) # 114 samples
+Xu_NKSig <- Xu[rownames(Xu) %in% NKUpSet$GeneID, ] # some missing genes - remove NAs
+Xu_NKSig <- Xu_NKSig[NKUpSet$GeneID, ]
+Xu_NKSig <- Xu_NKSig[complete.cases(Xu_NKSig), ]
+NKUpSet2 <- NKUpSet[NKUpSet$GeneID %in% rownames(Xu_NKSig), ]
+all(rownames(Xu_NKSig) == NKUpSet2$GeneID)
+rownames(Xu_NKSig) <- NKUpSet2$Symbol
+
+XuAnnot <- read.csv("../data/KeyData/blood_nk/XuBulk_Annot.csv")
+rownames(XuAnnot) <- XuAnnot$Samples
+XuAnnot <- XuAnnot[ , -c(1:2)]
+
+# make sample names consistent across annot and expr files (the expr data names get corrected when it becomes as dataframe ie. it can't handle "VD2-" and converts it to "VD2..1":
+testvector <- as.character(rownames(XuAnnot))
+colnames(Xu_NKSig) <- testvector
+all(rownames(XuAnnot) == colnames(Xu_NKSig)) # TRUE
+
+# reorder the T cells
+CD8 <- XuAnnot[grep("CD8", rownames(XuAnnot)), ]
+CD8$CellType <- as.character(CD8$CellType)
+CD8$CellType[c(1,5,9,13)] <- "CD8_naive"
+CD8$CellType[c(2,6,10,14)] <- "CD8_CM"
+CD8$CellType[c(3,7,11,15)] <- "CD8_EM"
+CD8$CellType[c(4,8,12,16)] <- "CD8_TE"
+CD8$CellType <- as.factor(CD8$CellType)                           
+                               
+XuAnnot <- XuAnnot[! grepl("CD8", rownames(XuAnnot)), ]
+XuAnnot <- rbind(XuAnnot, CD8)
+
+Xu_NKSig_t <- t(Xu_NKSig)
+Xu_NKSig_t <- as.data.frame(Xu_NKSig_t)
+XuAnnot <- XuAnnot[rownames(Xu_NKSig_t), ]
+all(rownames(Xu_NKSig_t) == rownames(XuAnnot)) # TRUE
+
+Xu_NKSig_t$CellType <- as.vector(XuAnnot$CellType)
+Xu_NKSig_t$CellType <- as.factor(Xu_NKSig_t$CellType)
+Xu_NKSig_t$Sample <- rownames(Xu_NKSig_t)
+
+# long format:
+moltenXuMed <- melt(Xu_NKSig_t, id.vars= c("Sample", "CellType"))
+moltenXuMed <- moltenXuMed[order(moltenXuMed$CellType), ]
+
+moltenXuMed$Sample <- factor(moltenXuMed$Sample, levels = unique(moltenXuMed$Sample))
+```
+
+# Generate Figure 5A
+```{r}
+# lock factor level for plotting
+moltenXuMed$CellType <- factor(moltenXuMed$CellType, levels = c("NK", "B", "Basophils", "CD4", "CD8_naive", "CD8_CM", "CD8_EM", "CD8_TE", "MAIT", "mDC", "Monocytes", "Neutrophils", "pDC", "Plasmablasts", "Progenitor", "TFH", "Th1", "Th1/Th17", "Th17", "Th2", "Treg", "VD2-", "VD2+"))
+moltenXuMed <- arrange(moltenXuMed, moltenXuMed$CellType) # this (Total) is what we normalise the different area fractions against
+moltenXuMed$Sample <- factor(moltenXuMed$Sample, levels = unique(moltenXuMed$Sample))
+
+MyCols <- c("darkred", "seagreen2", "skyblue1", "salmon", "plum2", "mediumorchid1", "darkorchid3", "darkorchid4", "violetred", "red", "blue", "dodgerblue", "goldenrod", "grey", "yellow", "tomato4", "cornflowerblue", "orangered", "turquoise1", "mediumpurple2", "tan1", "chartreuse", "forestgreen")
+
+is_outlier <- function(x) {
+  return(x < quantile(x, 0.25) - 1.5 * IQR(x) | x > quantile(x, 0.75) + 1.5 * IQR(x))
+}
+
+PP2 <- moltenXuMed %>%
+  group_by(CellType) %>%
+  mutate(outlier = ifelse(is_outlier(value), as.character(variable), '')) %>%
+  ggplot(., aes(x = factor(Sample), y = value, fill = CellType, color = CellType)) +
+    geom_boxplot(color = "black") +
+    geom_label_repel(aes(label = outlier), na.rm = TRUE, fill = NA, size = 8) +
+  ggtitle("GSE107011 (Xu et al); Training Data") +
+  scale_fill_manual(values = MyCols) + 
+  scale_color_manual(values = MyCols) +
+  labs(y = "Expression (LogTPM)", x = "") +
+  theme_light() +
+  theme(axis.text.x = element_blank(), text = element_text(size = 26), plot.title = element_text(face = "bold", hjust = 0.5), legend.text = element_text(size = 30))
+
+# A corresponding figure for murine immuen cells was generated using the ImmGen database webtool (available at https://www.immgen.org)
+```

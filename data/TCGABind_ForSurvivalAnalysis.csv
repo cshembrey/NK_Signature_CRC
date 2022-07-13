@@ -1,0 +1,455 @@
+,NKUp,classification_of_tumor,primary_diagnosis,tumor_stage,vital_status,days_to_death,days_to_recurrence,Subtype_MSI_Status,methylation_subtype,MLH1_silencing,expression_subtype,hypermutated,silent_mutrate,nonsilent_mutrate,anatomic_organ_subdivision,M_Stage,histological_type,N_Stage,T_Stage,prior_diagnosis,residual_tumor,synchronous_colon_cancer_present,tumor_stage.1,sample.uniqe.4,ESTIMATE,CPE
+TCGA.A6.5656,-0.384671414,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-5656-01A-21R,0.9606,0.7
+TCGA.5M.AAT4,-0.422605704,not reported,"Adenocarcinoma, NOS",Stage IV,dead,49,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-5M-AAT4-01A-11R,0.972,0.8372
+TCGA.AY.A69D,-0.409664519,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AY-A69D-01A-11R,0.9468,0.751
+TCGA.AA.3979,-0.401809644,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,CIMP.L,0,Invasive,0,1.22,4.21,Sigmoid Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3979-01A-01R,NA,0.8063
+TCGA.A6.5660,-0.400925684,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-5660-01A-01R,0.8908,0.8604
+TCGA.AA.A02E,-0.377246144,not reported,"Adenocarcinoma, NOS",Stage IV,dead,90,NA,MSI-L,Cluster3,0,CIN,NA,NA,NA,Cecum,M1,Non-Mucinous,N1,T3,NO,R2,NO,Stage IV,TCGA-AA-A02E-01A-01R,NA,0.7995
+TCGA.A6.6138,-0.386930818,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6138-01A-11R,0.7306,0.7069
+TCGA.AA.3489,-0.400289232,not reported,"Adenocarcinoma, NOS",Stage II,dead,214,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AA-3489-01A-21R,0.5679,0.4634
+TCGA.AA.A02K,-0.400428898,not reported,"Adenocarcinoma, NOS",Stage IV,dead,426,NA,MSS,Cluster3,0,NA,NA,NA,NA,Ascending Colon,M1,Non-Mucinous,N2,NA,NO,R2,NO,Stage IV,TCGA-AA-A02K-01A-03R,0.9602,0.8739
+TCGA.CK.6751,-0.399986917,not reported,Mucinous adenocarcinoma,Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-6751-01A-11R,0.8724,0.7702
+TCGA.CM.6680,-0.396725102,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6680-01A-11R,0.8143,0.7525
+TCGA.A6.3810,-0.413684773,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster4,0,MSI/CIMP,0,0.927,3.3,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-A6-3810-01A-01R,NA,0.759
+TCGA.AA.3693,-0.37599976,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,MSS,Cluster4,0,CIN,0,1.26,3.86,Sigmoid Colon,M1,Non-Mucinous,N1,NA,NO,R2,NO,Stage IV,TCGA-AA-3693-01A-01R,NA,0.9515
+TCGA.G4.6314,-0.421210814,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6314-01A-11R,0.8386,0.7626
+TCGA.D5.6537,-0.403167408,not reported,"Adenocarcinoma, NOS",Stage III,dead,146,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6537-01A-11R,0.9619,0.8767
+TCGA.CK.5913,-0.368768961,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-5913-01A-11R,0.8486,0.7758
+TCGA.AA.3509,-0.401521473,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3509-01A-01R,0.8848,0.8674
+TCGA.AA.3697,-0.410085285,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AA-3697-01A-01R,0.9038,0.8171
+TCGA.AD.6965,-0.403400774,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-6965-01A-11R,0.9398,0.8692
+TCGA.A6.6137,-0.402898684,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6137-01A-11R,0.8932,0.6883
+TCGA.CM.4747,-0.391605202,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,MSI-L,NA,NA,NA,NA,NA,NA,Cecum,M1a,Non-Mucinous,N1b,T4a,NO,R0,NO,Stage IVA,TCGA-CM-4747-01A-01R,0.9176,0.7833
+TCGA.F4.6809,-0.410184288,not reported,"Adenocarcinoma, NOS",Stage IV,dead,403,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6809-01A-11R,0.7947,0.7033
+TCGA.AA.A02H,-0.402628192,not reported,"Adenocarcinoma, NOS",Stage IV,dead,61,NA,MSS,Cluster3,0,CIN,0,0.729,2.53,Sigmoid Colon,M1,Non-Mucinous,N2,T3,NO,R2,NO,Stage IV,TCGA-AA-A02H-01A-01R,NA,0.8631
+TCGA.A6.6654,-0.393203403,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6654-01A-21R,0.5848,0.5196
+TCGA.AA.3842,-0.421385838,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,CIMP.L,0,MSI/CIMP,0,1.01,1.94,Sigmoid Colon,M0,Non-Mucinous,N1,T2,NO,R0,NO,Stage IIIA,TCGA-AA-3842-01A-01R,NA,0.8103
+TCGA.AY.6197,-0.413315277,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AY-6197-01A-11R,0.9293,0.8412
+TCGA.AZ.5403,-0.418649096,not reported,"Adenocarcinoma, NOS",Stage II,dead,1910,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-5403-01A-01R,0.87,0.7542
+TCGA.AA.3495,-0.383932423,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Hepatic Flexure,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3495-01A-01R,0.907,0.7841
+TCGA.D5.6928,-0.351632499,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6928-01A-11R,0.4425,0.4635
+TCGA.CM.5341,-0.390519698,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Sigmoid Colon,M0,Non-Mucinous,N1a,T2,NO,R0,YES,Stage IIIA,TCGA-CM-5341-01A-01R,NA,0.6573
+TCGA.F4.6463,-0.368169636,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6463-01A-11R,0.8678,0.7027
+TCGA.AA.3858,-0.39521353,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.67,1.72,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3858-01A-01R,NA,0.7521
+TCGA.G4.6307,-0.387210149,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6307-01A-11R,0.9759,0.8348
+TCGA.AA.3522,-0.400923916,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,CIMP.L,0,Invasive,0,0.773,1.95,Ascending Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3522-01A-01R,NA,0.6299
+TCGA.DM.A288,-0.426638333,not reported,Mucinous adenocarcinoma,Stage III,dead,427,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A288-01A-11R,0.9718,0.8526
+TCGA.D5.6929,-0.407191197,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6929-01A-31R,0.838,0.7439
+TCGA.CA.6715,-0.418106344,not reported,"Papillary adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CA-6715-01A-21R,0.9696,0.9473
+TCGA.F4.6808,-0.401445453,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6808-01A-11R,0.9628,0.6939
+TCGA.CM.6162,-0.38607868,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6162-01A-11R,0.5751,0.5884
+TCGA.AA.3712,-0.409484191,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AA-3712-01A-21R,0.8715,0.7887
+TCGA.AA.A010,-0.390443678,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-L,Cluster4,0,MSI/CIMP,1,67.5,262,Transverse Colon,M0,Non-Mucinous,N0,NA,NO,R0,NO,Stage IIB,TCGA-AA-A010-01A-01R,NA,0.6119
+TCGA.CM.5864,-0.400580939,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-5864-01A-01R,0.9308,0.874
+TCGA.AA.A00A,-0.37185752,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-H,CIMP.H,0,MSI/CIMP,1,5.52,16.1,Ascending Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-A00A-01A-01R,NA,0.8806
+TCGA.AY.6196,-0.379609855,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AY-6196-01A-11R,0.3793,0.5077
+TCGA.AZ.4684,-0.382544605,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,MSI-L,NA,NA,NA,NA,NA,NA,NA,M1,Non-Mucinous,N2,T3,NO,NA,YES,Stage IVA,TCGA-AZ-4684-01A-01R,0.8359,0.729
+TCGA.AA.A02O,-0.387250811,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,CIMP.H,0,NA,0,0.91,4.44,Transverse Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-A02O-01A-21R,NA,0.8452
+TCGA.AD.6890,-0.372545241,not reported,"Adenocarcinoma, NOS",NA,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-6890-01A-11R,0.9084,0.7392
+TCGA.CK.5915,-0.391034163,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-5915-01A-11R,0.9735,0.9667
+TCGA.AA.3870,-0.388688132,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,MSS,CIMP.H,0,MSI/CIMP,0,1.29,3.53,Ascending Colon,M1,Non-Mucinous,N2,T3,YES,R0,NO,Stage IV,TCGA-AA-3870-01A-01R,NA,0.7663
+TCGA.AY.5543,-0.40114137,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AY-5543-01A-01R,0.9215,0.8266
+TCGA.D5.6534,-0.391835032,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6534-01A-21R,0.4894,0.5402
+TCGA.A6.A5ZU,-0.39200652,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-A5ZU-01A-11R,0.7937,0.7049
+TCGA.G4.6317,-0.394310122,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6317-01A-11R,0.99,0.8967
+TCGA.F4.6461,-0.424274622,not reported,"Adenocarcinoma, NOS",Stage III,dead,338,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6461-01A-11R,0.8282,0.7498
+TCGA.CM.4750,-0.38921674,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSI-L,NA,NA,NA,NA,NA,NA,NA,M0,Non-Mucinous,N1b,T1,NO,R0,NO,Stage IIIA,TCGA-CM-4750-01A-01R,NA,0.7913
+TCGA.CK.5914,-0.396247764,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-5914-01A-11R,0.9052,0.8818
+TCGA.AA.3529,-0.374864754,not reported,"Adenocarcinoma, NOS",Stage III,dead,0,NA,MSI-L,Cluster4,0,CIN,0,1,2.11,Sigmoid Colon,M0,Non-Mucinous,N2,T3,NO,R0,YES,Stage IIIC,TCGA-AA-3529-01A-02R,NA,0.6945
+TCGA.D5.7000,-0.42859719,not reported,Mucinous adenocarcinoma,Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-7000-01A-11R,0.8635,0.7947
+TCGA.DM.A0X9,-0.414883423,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A0X9-01A-11R,0.9334,0.8374
+TCGA.G4.6304,-0.374120459,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6304-01A-11R,0.9593,0.6126
+TCGA.A6.5657,-0.425102009,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-5657-01A-01R,0.8241,0.647
+TCGA.AA.3685,-0.38311034,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster4,0,Invasive,0,0.53,2.32,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3685-01A-02R,0.8167,0.7318
+TCGA.AZ.6606,-0.40997037,not reported,"Adenocarcinoma, NOS",Stage IV,dead,357,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-6606-01A-11R,0.9639,0.8824
+TCGA.AA.3679,-0.384782793,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,MSS,Cluster4,0,CIN,0,0.841,2.06,Descending Colon,M1,Non-Mucinous,N2,T3,NO,R2,NO,Stage IV,TCGA-AA-3679-01A-02R,NA,0.8293
+TCGA.AY.A54L,-0.409797113,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AY-A54L-01A-11R,0.993,0.836
+TCGA.AA.3851,-0.398178334,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster3,0,Invasive,0,0.843,2.49,Ascending Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3851-01A-01R,NA,0.7233
+TCGA.A6.5665,-0.367050541,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-5665-01A-01R,0.9417,0.8448
+TCGA.A6.6653,-0.400174317,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6653-01A-11R,0.8776,0.826
+TCGA.AA.3555,-0.418076289,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,MSS,CIMP.L,0,MSI/CIMP,1,7.18,34.8,Hepatic Flexure,M0,Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3555-01A-01R,NA,0.8279
+TCGA.F4.6856,-0.399467148,not reported,Mucinous adenocarcinoma,Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6856-01A-11R,0.9244,0.752
+TCGA.AD.6889,-0.400303375,not reported,"Adenocarcinoma, NOS",Stage II,dead,2532,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-6889-01A-11R,0.9399,0.8713
+TCGA.G4.6303,-0.399850787,not reported,"Adenocarcinoma, NOS",Stage IV,dead,2003,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6303-01A-11R,0.8767,0.8252
+TCGA.A6.2674,-0.409588499,not reported,Mucinous adenocarcinoma,Stage IV,alive,NA,NA,MSS,Cluster4,0,MSI/CIMP,0,0.344,0.86,Sigmoid Colon,M1,Mucinous,N2,T3,NO,R0,NO,Stage IV,TCGA-A6-2674-01A-02R,NA,0.551
+TCGA.AA.3819,-0.417461053,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-L,Cluster3,0,CIN,0,1.18,5.18,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3819-01A-01R,NA,0.7609
+TCGA.D5.5540,-0.389538502,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-5540-01A-01R,0.9401,0.9467
+TCGA.D5.6532,-0.40380386,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6532-01A-11R,0.9524,0.8245
+TCGA.AA.3980,-0.36681364,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,Cluster3,0,Invasive,0,0.527,2.67,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,NA,NO,Stage I,TCGA-AA-3980-01A-02R,NA,0.792
+TCGA.AZ.4308,-0.381310596,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Sigmoid Colon,M0,Non-Mucinous,N1,T3,NO,R0,NA,Stage IIIB,TCGA-AZ-4308-01A-01R,NA,0.8171
+TCGA.AA.3560,-0.389460713,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.505,1.94,Sigmoid Colon,M0,Non-Mucinous,N2,T3,YES,R0,NO,Stage IIIC,TCGA-AA-3560-01A-01R,NA,0.8307
+TCGA.CM.5861,-0.372651316,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-5861-01A-01R,0.9434,0.8646
+TCGA.CM.6167,-0.407871847,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6167-01A-11R,0.6777,0.5728
+TCGA.F4.6806,-0.405745037,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6806-01A-11R,0.8933,0.8361
+TCGA.G4.6627,-0.407235395,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6627-01A-11R,0.7862,0.6509
+TCGA.AA.3525,-0.400382932,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,8.25,24.3,Hepatic Flexure,M0,Non-Mucinous,N1,T3,YES,R0,NO,Stage IIIB,TCGA-AA-3525-01A-02R,NA,0.7697
+TCGA.AA.3837,-0.387834226,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,MSS,CIMP.H,0,CIN,0,1.68,3.78,Hepatic Flexure,M0,Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3837-01A-01R,NA,0.6837
+TCGA.AA.3561,-0.396447539,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster3,0,Invasive,0,1.01,1.57,Ascending Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3561-01A-01R,NA,0.8956
+TCGA.CA.5796,-0.382753219,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CA-5796-01A-01R,0.9264,0.9105
+TCGA.AA.A01S,-0.384537052,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSI-L,Cluster4,1,NA,0,0.65,1.52,Sigmoid Colon,M0,Non-Mucinous,N1,T3,NO,R0,NO,Stage IIIB,TCGA-AA-A01S-01A-21R,NA,0.918
+TCGA.AA.A02Y,-0.393617097,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,CIMP.L,0,NA,0,0.705,3.42,Cecum,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-A02Y-01A-43R,0.9678,0.8835
+TCGA.AZ.4614,-0.381734897,not reported,"Adenocarcinoma, NOS",Stage IV,dead,172,NA,MSI-L,NA,NA,NA,NA,NA,NA,NA,M1,Non-Mucinous,N1,T4a,NO,R0,NA,Stage IVA,TCGA-AZ-4614-01A-01R,0.9712,0.9149
+TCGA.D5.6932,-0.403556351,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6932-01A-11R,0.8657,0.7758
+TCGA.G4.6298,-0.41590705,not reported,"Adenocarcinoma, NOS",Stage III,dead,715,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6298-01A-11R,0.9523,0.7918
+TCGA.AZ.6603,-0.411923923,not reported,"Adenocarcinoma, NOS",NA,dead,899,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-6603-01A-11R,0.8307,0.7362
+TCGA.CM.4751,-0.392964734,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-4751-01A-02R,0.8345,0.6852
+TCGA.AA.A00W,-0.397193602,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,Cluster3,0,Invasive,0,0.214,0.98,Sigmoid Colon,M0,Non-Mucinous,N0,T1,NO,R0,NO,Stage I,TCGA-AA-A00W-01A-01R,NA,0.8929
+TCGA.AA.3833,-0.381192145,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,5.74,13.5,Ascending Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3833-01A-01R,NA,0.5097
+TCGA.QL.A97D,-0.406395633,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-QL-A97D-01A-12R,0.9135,0.7752
+TCGA.AA.A02J,-0.393581738,not reported,"Adenocarcinoma, NOS",Stage IV,dead,153,NA,MSS,Cluster4,0,CIN,0,1.33,4.43,Sigmoid Colon,M1,Non-Mucinous,N0,T3,NO,R2,NO,Stage IV,TCGA-AA-A02J-01A-01R,NA,0.8835
+TCGA.CM.5348,-0.401631084,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-5348-01A-21R,0.7164,0.7174
+TCGA.D5.6541,-0.378412972,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6541-01A-11R,0.739,0.6845
+TCGA.AA.A00U,-0.412319937,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,CIMP.L,0,Invasive,0,0.953,2.65,Ascending Colon,M0,Non-Mucinous,N1,T3,NO,R0,YES,Stage IIIB,TCGA-AA-A00U-01A-01R,NA,0.8835
+TCGA.CK.5912,-0.387475337,not reported,"Adenocarcinoma, NOS",Stage I,dead,1493,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-5912-01A-11R,0.9244,0.9025
+TCGA.AA.A00L,-0.404412025,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.409,1.8,Transverse Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-A00L-01A-01R,NA,0.9075
+TCGA.AA.3521,-0.412088339,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.514,1.84,Sigmoid Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3521-01A-01R,NA,0.8137
+TCGA.D5.6898,-0.400446577,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6898-01A-11R,0.8272,0.7443
+TCGA.AA.3526,-0.388956856,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSI-L,Cluster3,0,MSI/CIMP,0,1.05,2.21,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3526-01A-02R,0.8622,0.8233
+TCGA.A6.2683,-0.381773791,not reported,"Adenocarcinoma, NOS",Stage IV,dead,504,NA,MSI-L,CIMP.L,0,CIN,0,1.37,2.9,Ascending Colon,M1,Non-Mucinous,N0,NA,NO,R0,NO,Stage IV,TCGA-A6-2683-01A-01R,NA,0.786
+TCGA.AA.A017,-0.392370712,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster4,0,CIN,0,0.76,2.28,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-A017-01A-01R,NA,0.7074
+TCGA.AA.3534,-0.384522909,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.563,2.17,Ascending Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3534-01A-01R,NA,0.7352
+TCGA.AA.A029,-0.391886301,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-L,CIMP.H,0,Invasive,0,1.32,3.75,Cecum,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-A029-01A-01R,NA,0.8577
+TCGA.AA.3860,-0.395607776,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster4,0,MSI/CIMP,0,0.469,1.41,Sigmoid Colon,M0,Non-Mucinous,N1,T3,YES,R0,NO,Stage IIIB,TCGA-AA-3860-01A-02R,NA,0.8293
+TCGA.F4.6570,-0.36099541,not reported,"Adenocarcinoma, NOS",Stage II,dead,188,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6570-01A-11R,0.6811,0.6576
+TCGA.DM.A0XF,-0.391060682,not reported,"Adenocarcinoma, NOS",Stage III,dead,1162,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A0XF-01A-11R,0.9108,0.7395
+TCGA.F4.6854,-0.404953009,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6854-01A-11R,0.874,0.79
+TCGA.CA.6718,-0.349707232,not reported,"Adenocarcinoma, NOS",Stage II,dead,306,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CA-6718-01A-11R,0.7723,0.6664
+TCGA.AA.3848,-0.382438529,not reported,"Adenocarcinoma, NOS",Stage III,dead,306,NA,MSS,CIMP.L,0,CIN,0,1.86,3.81,Sigmoid Colon,M0,Non-Mucinous,N2,T3,NO,R0,NO,Stage IIIC,TCGA-AA-3848-01A-01R,NA,0.7657
+TCGA.AA.3856,-0.398931468,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster4,0,Invasive,0,0.676,1.82,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3856-01A-01R,NA,0.7825
+TCGA.QG.A5Z2,-0.394646027,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-QG-A5Z2-01A-11R,0.9298,0.8806
+TCGA.AA.3977,-0.358279883,not reported,"Adenocarcinoma, NOS",NA,alive,NA,NA,MSS,Cluster3,0,MSI/CIMP,1,24.1,102,Sigmoid Colon,NA,Non-Mucinous,N0,T2,NO,NA,NO,NA,TCGA-AA-3977-01A-01R,NA,0.7961
+TCGA.A6.2679,-0.364769923,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Ascending Colon,NA,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIB,TCGA-A6-2679-01A-02R,NA,0.6226
+TCGA.AA.3681,-0.404806271,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,CIMP.L,0,MSI/CIMP,0,0.955,3.2,Cecum,M0,Non-Mucinous,N1,T3,NO,R0,NO,Stage IIIB,TCGA-AA-3681-01A-01R,NA,0.7027
+TCGA.G4.6306,-0.412392422,not reported,"Adenocarcinoma, NOS",NA,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6306-01A-11R,0.9687,0.8287
+TCGA.AA.3538,-0.401272196,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,Cluster4,0,CIN,0,0.573,1.41,Descending Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3538-01A-01R,NA,0.8551
+TCGA.AZ.4615,-0.372654852,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSI-H,NA,NA,NA,NA,NA,NA,NA,M0,Non-Mucinous,N1,T3,NO,RX,YES,Stage IIIB,TCGA-AZ-4615-01A-01R,0.7739,0.7509
+TCGA.AA.3941,-0.412737167,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,MSI-L,CIMP.H,0,Invasive,0,0.655,3.31,Ascending Colon,M1a,Non-Mucinous,N1b,NA,NO,R0,YES,Stage IVA,TCGA-AA-3941-01A-01R,NA,0.8435
+TCGA.CM.5868,-0.407939028,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-5868-01A-01R,0.9042,0.7415
+TCGA.AZ.4682,-0.395989647,not reported,"Adenocarcinoma, NOS",Stage IV,dead,680,NA,MSS,NA,NA,NA,NA,NA,NA,Sigmoid Colon,M1,Non-Mucinous,N0,T3,NO,R0,YES,Stage IVA,TCGA-AZ-4682-01B-01R,0.9415,0.8671
+TCGA.AA.3519,-0.401035295,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.743,1.53,Rectosigmoid Junction,M0,Non-Mucinous,N1,T3,NO,R0,NO,Stage IIIB,TCGA-AA-3519-01A-02R,NA,0.7721
+TCGA.G4.6297,-0.421408821,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6297-01A-11R,0.7876,0.6654
+TCGA.AA.A00K,-0.396624331,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-L,Cluster3,0,Invasive,0,2.18,3.74,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-A00K-01A-02R,NA,0.7982
+TCGA.A6.5664,-0.410483067,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-5664-01A-21R,0.7481,0.6426
+TCGA.AA.3514,-0.365157097,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,Cluster3,0,MSI/CIMP,0,0.719,2.5,Ascending Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3514-01A-02R,NA,0.8022
+TCGA.AA.3655,-0.423106026,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AA-3655-01A-02R,0.8852,0.841
+TCGA.G4.6323,-0.40222157,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6323-01A-11R,0.9232,0.5896
+TCGA.A6.5661,-0.389808994,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-5661-01A-01R,0.9133,0.7771
+TCGA.AA.3562,-0.389236187,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.708,1.38,Descending Colon,M0,Non-Mucinous,N2,T3,YES,R0,NO,Stage IIIC,TCGA-AA-3562-01A-02R,NA,0.7632
+TCGA.A6.A567,-0.402812056,not reported,"Adenocarcinoma, NOS",Stage IV,dead,1881,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-A567-01A-31R,0.938,0.8594
+TCGA.A6.2680,-0.394444484,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Hepatic Flexure,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-A6-2680-01A-01R,NA,0.769
+TCGA.A6.2676,-0.358804956,not reported,"Adenocarcinoma, NOS",Stage II,dead,1305,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,10.8,27.8,Cecum,M0,Mucinous,N0,NA,NO,R0,NO,Stage IIB,TCGA-A6-2676-01A-01R,NA,0.8171
+TCGA.AA.3496,-0.377889668,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AA-3496-01A-21R,0.762,0.7004
+TCGA.AA.3672,-0.355274417,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,18.1,52.3,Transverse Colon,M0,Non-Mucinous,N1,T3,YES,R0,NO,Stage IIIB,TCGA-AA-3672-01A-01R,NA,0.8171
+TCGA.A6.2684,-0.382539301,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSI-L,NA,NA,NA,NA,NA,NA,Cecum,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-A6-2684-01A-01R,0.7705,0.725
+TCGA.4T.AA8H,-0.399590903,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-4T-AA8H-01A-11R,0.9865,0.8917
+TCGA.AA.3956,-0.409632697,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster3,0,CIN,0,1.02,4.1,Cecum,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3956-01A-02R,NA,0.7555
+TCGA.AD.6901,-0.392139114,not reported,"Adenocarcinoma, NOS",NA,dead,682,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-6901-01A-11R,0.7585,0.7059
+TCGA.AZ.6598,-0.376858969,not reported,"Adenocarcinoma, NOS",Stage II,dead,1503,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-6598-01A-11R,0.8714,0.8718
+TCGA.AA.A00J,-0.411054105,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,12.9,38.6,Ascending Colon,M0,Mucinous,N1,NA,NO,R0,NO,Stage IIIB,TCGA-AA-A00J-01A-02R,NA,0.9329
+TCGA.D5.6529,-0.41230933,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6529-01A-11R,0.7185,0.6063
+TCGA.AY.6386,-0.393838087,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AY-6386-01A-21R,0.9177,0.8266
+TCGA.A6.6782,-0.383686682,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6782-01A-11R,0.7666,0.6936
+TCGA.AA.3947,-0.378962796,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,13.8,41.9,Ascending Colon,M0,Mucinous,N0,NA,NO,R0,NO,Stage IIB,TCGA-AA-3947-01A-01R,NA,0.8137
+TCGA.AA.3818,-0.412141377,not reported,"Adenocarcinoma, NOS",Stage II,dead,30,NA,MSS,CIMP.L,0,Invasive,0,1.37,3.71,Hepatic Flexure,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3818-01A-01R,NA,0.9281
+TCGA.NH.A8F7,-0.401797269,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-NH-A8F7-06A-31R,0.9928,0.784
+TCGA.AM.5820,-0.413902227,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AM-5820-01A-01R,0.921,0.8495
+TCGA.CM.4744,-0.367573846,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Cecum,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-CM-4744-01A-01R,0.9146,0.7982
+TCGA.AA.A01P,-0.35366384,not reported,"Adenocarcinoma, NOS",Stage III,dead,1158,NA,MSI-H,CIMP.H,1,NA,1,4.99,14.6,Ascending Colon,M0,Non-Mucinous,N1,T3,NO,R0,NO,Stage IIIB,TCGA-AA-A01P-01A-21R,0.7085,0.6147
+TCGA.F4.6704,-0.410559087,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6704-01A-11R,0.7281,0.6413
+TCGA.AA.3696,-0.401825556,not reported,"Adenocarcinoma, NOS",Stage IV,dead,153,NA,MSS,Cluster4,0,CIN,0,0.932,2.67,Sigmoid Colon,M1,Non-Mucinous,N1,T3,NO,R2,NO,Stage IV,TCGA-AA-3696-01A-01R,NA,0.8929
+TCGA.AA.3680,-0.395800479,not reported,"Adenocarcinoma, NOS",Stage IV,dead,335,NA,MSI-L,CIMP.L,0,Invasive,0,0.913,3.36,Cecum,M1,Non-Mucinous,N2,NA,NO,R2,NO,Stage IV,TCGA-AA-3680-01A-01R,NA,0.7975
+TCGA.D5.6930,-0.374002008,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6930-01A-11R,0.797,0.6844
+TCGA.F4.6459,-0.399069366,not reported,"Adenocarcinoma, NOS",Stage III,dead,262,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6459-01A-11R,0.8241,0.7145
+TCGA.G4.6293,-0.377058744,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6293-01A-11R,0.8604,0.7764
+TCGA.CK.4950,-0.412486122,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-4950-01A-01R,0.8581,0.6376
+TCGA.AA.A00R,-0.333589093,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSI-H,CIMP.L,1,MSI/CIMP,1,6.76,14.9,Cecum,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-A00R-01A-01R,NA,0.7636
+TCGA.AA.A01R,-0.355670431,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,MSI-H,CIMP.L,0,NA,1,16.5,40.5,Ascending Colon,M0,Mucinous,N2,T3,NO,R0,NO,Stage IIIB,TCGA-AA-A01R-01A-21R,NA,0.7853
+TCGA.D5.6536,-0.402483222,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6536-01A-11R,0.8639,0.7527
+TCGA.CA.5256,-0.371090242,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Hepatic Flexure,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-CA-5256-01A-01R,0.9154,0.8469
+TCGA.AY.A71X,-0.402421345,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AY-A71X-01A-12R,0.993,0.8424
+TCGA.D5.6927,-0.392574023,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6927-01A-21R,0.7765,0.7466
+TCGA.AA.3664,-0.402205659,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,CIMP.H,1,MSI/CIMP,0,1.5,4.53,Cecum,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3664-01A-01R,NA,0.9566
+TCGA.A6.6651,-0.402980008,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6651-01A-21R,0.6086,0.606
+TCGA.AA.A03J,-0.379067103,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,CIMP.L,0,NA,0,1.02,2.19,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-A03J-01A-21R,NA,0.6905
+TCGA.AA.3666,-0.414635914,not reported,"Adenocarcinoma, NOS",Stage III,dead,61,NA,MSS,Cluster4,0,Invasive,0,0.827,5.37,Cecum,M0,Non-Mucinous,N1,T3,NO,R0,NO,Stage IIIB,TCGA-AA-3666-01A-02R,NA,0.9594
+TCGA.AA.3815,-0.353598427,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,NA,NA,NA,Cecum,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3815-01A-01R,NA,0.7913
+TCGA.D5.6924,-0.416113897,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6924-01A-11R,0.7636,0.6632
+TCGA.AA.3511,-0.427219979,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AA-3511-01A-21R,0.8644,0.7517
+TCGA.CA.5254,-0.402635264,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CA-5254-01A-21R,0.9048,0.7914
+TCGA.CM.6172,-0.398482416,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6172-01A-11R,0.9019,0.867
+TCGA.AZ.6607,-0.360859281,not reported,"Adenocarcinoma, NOS",Stage IV,dead,97,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-6607-01A-11R,0.6976,0.6945
+TCGA.AA.3846,-0.398788267,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.68,2.95,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3846-01A-01R,NA,0.7169
+TCGA.AA.A00D,-0.375329717,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,CIMP.H,0,MSI/CIMP,0,0.894,2.26,Ascending Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-A00D-01A-01R,NA,0.656
+TCGA.DM.A1HA,-0.370959416,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A1HA-01A-11R,0.9825,0.925
+TCGA.CK.4951,-0.380877455,not reported,Mucinous adenocarcinoma,Stage II,dead,2134,NA,MSI-H,NA,NA,NA,NA,NA,NA,Ascending Colon,M0,Mucinous,N0,T3,NO,NA,NA,Stage IIA,TCGA-CK-4951-01A-01R,0.7516,0.6729
+TCGA.CK.5916,-0.361354299,not reported,"Adenocarcinoma, NOS",Stage I,dead,643,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-5916-01A-11R,0.773,0.7022
+TCGA.AA.3684,-0.362968411,not reported,Mucinous adenocarcinoma,Stage IV,alive,NA,NA,MSS,CIMP.L,0,MSI/CIMP,0,1.17,3.47,Cecum,M1,Mucinous,N2,NA,NO,R2,NO,Stage IV,TCGA-AA-3684-01A-02R,NA,0.6632
+TCGA.CM.6168,-0.422720619,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6168-01A-11R,0.7102,0.6256
+TCGA.AA.A03F,-0.374988509,not reported,Mucinous adenocarcinoma,Stage III,dead,549,NA,MSS,CIMP.H,0,NA,0,1.04,3.46,Cecum,M0,Mucinous,N2,T3,NO,R0,NO,Stage IIIB,TCGA-AA-A03F-01A-11R,NA,0.8455
+TCGA.D5.5538,-0.414800331,not reported,"Adenocarcinoma, NOS",Stage III,dead,1661,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-5538-01A-01R,0.7559,0.6791
+TCGA.G4.6588,-0.390383568,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6588-01A-11R,0.8929,0.7913
+TCGA.AA.3531,-0.386914906,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-L,Cluster4,0,CIN,0,0.701,2.27,Sigmoid Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3531-01A-01R,NA,0.722
+TCGA.CM.5863,-0.417220615,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-5863-01A-21R,0.8391,0.792
+TCGA.AA.3862,-0.392052486,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster4,0,Invasive,NA,NA,NA,Transverse Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3862-01A-01R,NA,0.6742
+TCGA.D5.6923,-0.419646204,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6923-01A-11R,0.8442,0.7805
+TCGA.G4.6311,-0.419545432,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6311-01A-11R,0.8414,0.7042
+TCGA.AA.A024,-0.372391432,not reported,Mucinous adenocarcinoma,Stage II,dead,1188,NA,MSI-L,Cluster3,0,Invasive,0,1.23,2.9,Descending Colon,M0,Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-A024-01A-02R,NA,0.8679
+TCGA.AA.A00Q,-0.410145394,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,CIMP.L,0,CIN,0,0.608,1,Sigmoid Colon,M0,Non-Mucinous,N1,NA,NO,R0,NO,Stage IIIB,TCGA-AA-A00Q-01A-01R,NA,0.7034
+TCGA.DM.A1DA,-0.419909624,not reported,"Adenocarcinoma, NOS",Stage III,dead,228,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A1DA-01A-11R,0.9639,0.8875
+TCGA.A6.5659,-0.416083842,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-5659-01A-01R,0.9207,0.8
+TCGA.DM.A1D0,-0.400170781,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A1D0-01A-11R,0.9901,0.9594
+TCGA.F4.6807,-0.403483866,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6807-01A-11R,0.6868,0.667
+TCGA.NH.A50T,-0.388166595,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-NH-A50T-01A-11R,0.9744,0.9101
+TCGA.AA.A00F,-0.412894512,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.543,1.34,Sigmoid Colon,M0,Non-Mucinous,N2,T3,NO,R0,YES,Stage IIIC,TCGA-AA-A00F-01A-01R,NA,0.5896
+TCGA.AA.A01V,-0.381271701,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,CIMP.L,0,NA,0,1.37,3.16,Cecum,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-A01V-01A-23R,NA,0.7913
+TCGA.A6.5662,-0.382664823,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-5662-01A-01R,0.9315,0.9569
+TCGA.NH.A50V,-0.415130932,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-NH-A50V-01A-11R,0.8372,0.7894
+TCGA.AA.3713,-0.388675756,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AA-3713-01A-21R,0.8577,0.7508
+TCGA.AD.6899,-0.403597013,not reported,Mucinous adenocarcinoma,Stage III,dead,176,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-6899-01A-11R,0.7397,0.7507
+TCGA.D5.6931,-0.417712098,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6931-01A-11R,0.8367,0.7901
+TCGA.DM.A28C,-0.397372162,not reported,"Adenocarcinoma, NOS",Stage II,dead,2475,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A28C-01A-11R,0.9766,0.9374
+TCGA.AZ.4313,-0.382017764,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSI-H,NA,NA,NA,NA,NA,NA,Descending Colon,M0,Non-Mucinous,N0,T1,YES,NA,NA,Stage I,TCGA-AZ-4313-01A-01R,0.9596,0.746
+TCGA.G4.6309,-0.402911059,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6309-01A-21R,0.9478,0.9214
+TCGA.CA.5255,-0.402919899,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CA-5255-01A-11R,0.9746,0.6927
+TCGA.CK.4947,-0.404456223,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-4947-01B-11R,0.8189,0.7223
+TCGA.A6.2677,-0.391069522,not reported,"Adenocarcinoma, NOS",Stage III,dead,740,NA,MSS,Cluster3,0,CIN,0,1.08,2.89,Cecum,M0,Non-Mucinous,N2,T3,NO,R0,NO,Stage IIIC,TCGA-A6-2677-01A-01R,NA,0.8869
+TCGA.AA.3970,-0.383532873,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster3,0,NA,NA,NA,NA,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3970-01A-01R,NA,0.8029
+TCGA.D5.6922,-0.403572262,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6922-01A-11R,0.8365,0.7744
+TCGA.G4.6302,-0.406749217,not reported,Mucinous adenocarcinoma,Stage II,dead,2047,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6302-01A-11R,0.71,0.6167
+TCGA.CM.4746,-0.385413941,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSI-H,NA,NA,NA,NA,NA,NA,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-CM-4746-01A-01R,NA,0.7736
+TCGA.AD.A5EJ,-0.380773147,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-A5EJ-01A-11R,0.9309,0.7913
+TCGA.AA.3930,-0.389656953,not reported,"Adenocarcinoma, NOS",Stage IV,dead,61,NA,MSI-L,CIMP.L,0,MSI/CIMP,0,0.454,4.84,Ascending Colon,M1,Non-Mucinous,N2,T3,NO,R2,NO,Stage IV,TCGA-AA-3930-01A-01R,NA,0.766
+TCGA.A6.A566,-0.400303375,not reported,Mucinous adenocarcinoma,Stage III,dead,758,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-A566-01A-11R,0.5387,0.5854
+TCGA.A6.2681,-0.403780877,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Cecum,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-A6-2681-01A-01R,NA,0.6939
+TCGA.AA.3520,-0.417609558,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-L,Cluster3,0,Invasive,0,0.585,2.09,Ascending Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3520-01A-01R,NA,0.7372
+TCGA.AA.3532,-0.378527887,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster4,0,MSI/CIMP,0,0.414,1.33,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3532-01A-01R,NA,0.6397
+TCGA.AA.3852,-0.41044594,not reported,Mucinous adenocarcinoma,Stage II,dead,0,NA,MSI-L,CIMP.L,0,MSI/CIMP,0,0.96,3.88,Transverse Colon,M0,Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3852-01A-01R,NA,0.7135
+TCGA.NH.A8F8,-0.41755652,not reported,"Adenocarcinoma, NOS",Stage IV,dead,511,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-NH-A8F8-01A-72R,0.8809,0.7977
+TCGA.AA.A01F,-0.406968439,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.506,1.98,Sigmoid Colon,M0,Non-Mucinous,N1,T3,NO,R0,NO,Stage IIIB,TCGA-AA-A01F-01A-01R,NA,0.8733
+TCGA.AA.3975,-0.390606326,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,Cluster4,0,CIN,0,0.928,3.53,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3975-01A-01R,NA,0.8022
+TCGA.AA.3542,-0.375556011,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster4,0,CIN,0,2.06,8.24,Sigmoid Colon,M0,Non-Mucinous,N2,T3,NO,R0,NO,Stage IIIC,TCGA-AA-3542-01A-02R,NA,0.8449
+TCGA.DM.A1D6,-0.420279119,not reported,Mucinous adenocarcinoma,Stage II,dead,1518,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A1D6-01A-21R,0.9861,0.9916
+TCGA.AA.3688,-0.398127064,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,MSI-L,Cluster4,0,CIN,0,0.465,1.69,Sigmoid Colon,M1,Non-Mucinous,N1,T3,YES,R2,NO,Stage IV,TCGA-AA-3688-01A-01R,NA,0.8257
+TCGA.AA.3667,-0.366537844,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSI-L,Cluster4,0,CIN,0,0.483,2.09,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3667-01A-01R,NA,0.8577
+TCGA.AA.3952,-0.394456859,not reported,"Adenocarcinoma, NOS",Stage III,dead,61,NA,MSS,Cluster4,0,MSI/CIMP,0,0.783,2.16,Descending Colon,M0,Non-Mucinous,N2,T3,YES,R0,NO,Stage IIIC,TCGA-AA-3952-01A-01R,NA,0.8056
+TCGA.G4.6321,-0.371956523,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6321-01A-11R,0.9111,0.6939
+TCGA.AA.3494,-0.398314464,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Sigmoid Colon,M1,Non-Mucinous,N0,T3,NO,R2,NO,Stage IV,TCGA-AA-3494-01A-01R,NA,0.8646
+TCGA.F4.6805,-0.417729777,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6805-01A-11R,0.7479,0.6399
+TCGA.CM.4743,-0.365989788,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-4743-01A-01R,0.8915,0.5612
+TCGA.D5.6540,-0.384600697,not reported,Mucinous adenocarcinoma,Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6540-01A-11R,0.8916,0.8273
+TCGA.A6.2686,-0.356363456,not reported,"Adenocarcinoma, NOS",Stage II,dead,1126,NA,MSI-H,NA,NA,NA,NA,NA,NA,Cecum,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-A6-2686-01A-01R,0.7057,0.6683
+TCGA.AZ.6599,-0.389190221,not reported,"Adenocarcinoma, NOS",Stage I,dead,206,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-6599-01A-11R,0.983,0.7203
+TCGA.NH.A50U,-0.399449469,not reported,Mucinous adenocarcinoma,Stage IV,dead,334,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-NH-A50U-01A-33R,0.9268,0.7334
+TCGA.AY.4070,-0.386182987,not reported,"Adenocarcinoma, NOS",Stage III,dead,496,NA,MSS,Cluster3,0,CIN,0,1.36,3.94,Cecum,M0,Non-Mucinous,N2,T3,NO,R1,NO,Stage IIIC,TCGA-AY-4070-01A-01R,NA,0.6353
+TCGA.A6.5667,-0.419036271,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-5667-01A-21R,0.9105,0.8666
+TCGA.G4.6310,-0.402104887,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6310-01A-11R,0.9473,0.8603
+TCGA.AA.3973,-0.369389501,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,MSI-L,Cluster4,0,CIN,0,0.554,2.25,Sigmoid Colon,M1,Non-Mucinous,N1,NA,NO,R2,NO,Stage IV,TCGA-AA-3973-01A-01R,NA,0.8956
+TCGA.AA.A004,-0.349555191,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-L,CIMP.L,0,MSI/CIMP,0,0.674,2.54,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-A004-01A-01R,NA,0.749
+TCGA.DM.A0XD,-0.386950265,not reported,"Adenocarcinoma, NOS",Stage II,dead,743,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A0XD-01A-12R,0.9314,0.7887
+TCGA.CK.4948,-0.397632046,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-4948-01B-11R,0.8599,0.6854
+TCGA.AA.3821,-0.382972442,not reported,Mucinous adenocarcinoma,Stage I,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,6.5,21.9,Hepatic Flexure,M0,Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3821-01A-01R,NA,0.5862
+TCGA.AD.6964,-0.365355105,not reported,"Adenocarcinoma, NOS",NA,dead,331,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-6964-01A-11R,0.6166,0.6854
+TCGA.CK.4952,-0.432249715,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-4952-01A-01R,0.9292,0.8372
+TCGA.A6.6650,-0.43197392,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6650-01A-11R,0.9562,0.775
+TCGA.A6.6648,-0.394852874,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6648-01A-11R,0.9529,0.7204
+TCGA.DM.A1D7,-0.412654074,not reported,Mucinous adenocarcinoma,Stage II,dead,405,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A1D7-01A-11R,0.9443,0.8295
+TCGA.CM.6675,-0.404316557,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6675-01A-11R,0.9398,0.9288
+TCGA.AA.3831,-0.366279728,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,CIMP.L,0,Invasive,0,0.789,3.49,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3831-01A-01R,NA,0.771
+TCGA.CA.6717,-0.393887588,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CA-6717-01A-11R,0.7057,0.6109
+TCGA.AA.3855,-0.394182831,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSI-L,CIMP.L,0,Invasive,0,1.3,3.55,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3855-01A-01R,NA,0.6905
+TCGA.NH.A6GB,-0.411303382,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-NH-A6GB-01A-11R,0.9031,0.7019
+TCGA.G4.6625,-0.398203085,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6625-01A-21R,0.7372,0.6377
+TCGA.CM.6169,-0.395844677,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6169-01A-11R,0.6466,0.6415
+TCGA.DM.A28A,-0.404383738,not reported,"Adenocarcinoma, NOS",Stage III,dead,805,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A28A-01A-21R,0.926,0.9182
+TCGA.AA.3976,-0.399187817,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.901,2.51,Sigmoid Colon,M0,Non-Mucinous,N1,T2,YES,R0,NO,Stage IIIA,TCGA-AA-3976-01A-01R,NA,0.8022
+TCGA.AA.A022,-0.354127036,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-H,CIMP.H,1,NA,1,11.8,30.3,Cecum,M0,Non-Mucinous,N0,NA,NO,R0,NO,NA,TCGA-AA-A022-01A-21R,NA,0.7866
+TCGA.A6.6781,-0.357282775,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6781-01A-22R,0.5951,0.7
+TCGA.T9.A92H,-0.420233153,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-T9-A92H-01A-11R,0.9673,0.8238
+TCGA.D5.6531,-0.392294691,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6531-01A-11R,0.8321,0.7597
+TCGA.DM.A1DB,-0.403033046,not reported,"Adenocarcinoma, NOS",Stage II,dead,1348,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A1DB-01A-11R,0.9712,0.8767
+TCGA.A6.2682,-0.385634931,not reported,"Adenocarcinoma, NOS",Stage IV,dead,424,NA,MSS,NA,NA,NA,NA,NA,NA,Cecum,M1,Non-Mucinous,N1,T4b,YES,R0,NO,Stage IV,TCGA-A6-2682-01A-01R,0.8396,0.7927
+TCGA.D5.6530,-0.357516141,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6530-01A-11R,0.839,0.7916
+TCGA.NH.A5IV,-0.335486072,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-NH-A5IV-01A-42R,0.8343,0.7855
+TCGA.AA.3866,-0.368380018,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSI-L,Cluster3,0,MSI/CIMP,0,1.32,3,Cecum,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3866-01A-01R,NA,0.6921
+TCGA.AA.3845,-0.35399621,not reported,"Adenocarcinoma, NOS",Stage II,dead,0,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,8.61,25,Ascending Colon,M0,NA,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3845-01A-01R,NA,0.7169
+TCGA.QG.A5YX,-0.393267048,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-QG-A5YX-01A-11R,0.9711,0.8641
+TCGA.AA.3877,-0.388177202,not reported,Mucinous adenocarcinoma,Stage I,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,11.6,26.3,Transverse Colon,M0,Mucinous,N0,T1,NO,R0,NO,Stage I,TCGA-AA-3877-01A-01R,NA,0.749
+TCGA.AA.3844,-0.406699715,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster3,0,Invasive,0,1.13,3.07,Sigmoid Colon,M0,Non-Mucinous,N2,T3,YES,R0,NO,Stage IIIC,TCGA-AA-3844-01A-01R,NA,0.9041
+TCGA.AA.3867,-0.391923428,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,MSS,Cluster4,0,CIN,0,0.658,2.78,Sigmoid Colon,M1,Non-Mucinous,N2,T3,YES,R2,NO,Stage IV,TCGA-AA-3867-01A-01R,NA,0.7169
+TCGA.D5.5541,-0.410263845,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-5541-01A-01R,0.8364,0.7648
+TCGA.A6.3809,-0.392029503,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,NA,NA,NA,Transverse Colon,M0,Mucinous,N0,NA,NO,R0,NO,Stage IIB,TCGA-A6-3809-01A-01R,NA,0.6996
+TCGA.AA.A02R,-0.346150174,not reported,"Adenocarcinoma, NOS",Stage II,dead,670,NA,MSI-H,CIMP.H,1,MSI/CIMP,NA,NA,NA,Cecum,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-A02R-01A-01R,NA,0.8679
+TCGA.AA.A01G,-0.412956389,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,MSI-L,CIMP.L,0,Invasive,0,0.943,1.97,Cecum,M0,Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-A01G-01A-01R,NA,0.656
+TCGA.5M.AATE,-0.42476964,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-5M-AATE-01A-11R,0.9495,0.8443
+TCGA.A6.6142,-0.404940633,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6142-01A-11R,0.7844,0.6378
+TCGA.AZ.6601,-0.377960384,not reported,"Adenocarcinoma, NOS",Stage II,dead,3042,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-6601-01A-11R,0.7586,0.5991
+TCGA.WS.AB45,-0.382461512,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-WS-AB45-01A-11R,0.41,0.2093
+TCGA.AA.3955,-0.395788104,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster4,0,CIN,0,0.982,3.45,Descending Colon,M0,Non-Mucinous,N2a,T2,NO,R0,NO,Stage IIIB,TCGA-AA-3955-01A-02R,NA,0.8262
+TCGA.AA.3692,-0.375655015,not reported,Mucinous adenocarcinoma,Stage IV,dead,1095,NA,MSI-L,Cluster4,0,Invasive,0,0.499,1.75,Splenic Flexure,M1,Mucinous,N2,T3,YES,R2,NO,Stage IV,TCGA-AA-3692-01A-01R,NA,0.8603
+TCGA.DM.A28F,-0.405361398,not reported,"Adenocarcinoma, NOS",Stage III,dead,1094,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A28F-01A-11R,0.9587,0.7866
+TCGA.AA.3527,-0.341063864,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,CIMP.L,0,CIN,0,0.982,2.78,Cecum,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3527-01A-01R,NA,0.8374
+TCGA.QG.A5Z1,-0.396592508,not reported,"Adenocarcinoma, NOS",Stage III,dead,256,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-QG-A5Z1-01A-11R,0.9059,0.8827
+TCGA.AD.5900,-0.379622231,not reported,Mucinous adenocarcinoma,Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-5900-01A-11R,0.8218,0.7192
+TCGA.AA.3841,-0.377730555,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,YES,Stage IIA,TCGA-AA-3841-01A-01R,NA,0.7406
+TCGA.AA.3543,-0.356704665,not reported,Mucinous adenocarcinoma,Stage I,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,2.88,13,Cecum,M0,Mucinous,N0,T2,YES,R0,NO,Stage I,TCGA-AA-3543-01A-01R,NA,0.809
+TCGA.DM.A28G,-0.387104074,not reported,"Adenocarcinoma, NOS",Stage II,dead,1849,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A28G-01A-11R,0.9597,0.9182
+TCGA.AZ.4323,-0.410373456,not reported,"Adenocarcinoma, NOS",Stage IV,dead,43,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-4323-01A-21R,0.6701,0.4687
+TCGA.A6.2671,-0.394204046,not reported,"Adenocarcinoma, NOS",Stage IV,dead,1331,NA,MSS,NA,NA,NA,NA,NA,NA,Sigmoid Colon,M1,Non-Mucinous,NA,T3,NO,R0,NO,Stage IV,TCGA-A6-2671-01A-01R,NA,0.8394
+TCGA.AA.3972,-0.408904313,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,MSI-L,CIMP.L,0,CIN,0,1.3,2.82,Sigmoid Colon,M1,Non-Mucinous,N1,T3,YES,R2,NO,Stage IV,TCGA-AA-3972-01A-01R,NA,0.8645
+TCGA.AA.3530,-0.406034977,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,Cluster4,0,CIN,0,0.637,2.29,Cecum,M0,Non-Mucinous,N0,T2,YES,R0,NO,Stage I,TCGA-AA-3530-01A-01R,NA,0.8619
+TCGA.4N.A93T,-0.390873282,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-4N-A93T-01A-11R,0.9752,0.7898
+TCGA.NH.A6GA,-0.407939028,not reported,"Adenocarcinoma, NOS",Stage III,dead,302,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-NH-A6GA-01A-11R,0.9305,0.8064
+TCGA.CM.5862,-0.40401601,not reported,"Adenocarcinoma, NOS",Stage IV,dead,153,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-5862-01A-01R,0.9395,0.8896
+TCGA.A6.A56B,-0.429421041,not reported,"Adenocarcinoma, NOS",Stage III,dead,1711,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-A56B-01A-31R,0.9186,0.8971
+TCGA.AA.3989,-0.394177528,not reported,"Adenocarcinoma, NOS",Stage IV,dead,242,NA,MSS,CIMP.L,0,Invasive,0,0.911,3.24,Transverse Colon,M1,Non-Mucinous,N2,T3,NO,R2,NO,Stage IV,TCGA-AA-3989-01A-01R,NA,0.6932
+TCGA.NH.A6GC,-0.397435807,not reported,Mucinous adenocarcinoma,Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-NH-A6GC-01A-12R,0.9045,0.8361
+TCGA.CM.6165,-0.412820259,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6165-01A-11R,0.8278,0.8835
+TCGA.G4.6294,-0.391225099,not reported,"Adenocarcinoma, NOS",Stage IV,dead,858,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6294-01A-11R,0.9313,0.8756
+TCGA.AU.3779,-0.404673677,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AU-3779-01A-01R,0.8145,0.7508
+TCGA.AA.3950,-0.363562432,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,NA,NA,NA,Ascending Colon,M0,Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3950-01A-02R,NA,0.6508
+TCGA.G4.6320,-0.382758523,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6320-01A-11R,0.9619,0.7965
+TCGA.DM.A28M,-0.388866692,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A28M-01A-12R,0.9807,0.8391
+TCGA.G4.6315,-0.417489339,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6315-01A-11R,0.9798,0.8102
+TCGA.AA.3554,-0.386686845,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-H,Cluster4,0,MSI/CIMP,1,4.33,12,Ascending Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3554-01A-01R,NA,0.5327
+TCGA.AD.6963,-0.410249701,not reported,"Adenocarcinoma, NOS",NA,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-6963-01A-11R,0.9021,0.6548
+TCGA.AA.A01I,-0.411460727,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,CIMP.L,0,Invasive,0,0.637,3.62,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,R0,YES,Stage I,TCGA-AA-A01I-01A-02R,NA,0.7331
+TCGA.AA.3715,-0.330199987,not reported,Adenosquamous carcinoma,Stage II,dead,579,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,17.8,54.2,Ascending Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3715-01A-01R,NA,0.7223
+TCGA.DM.A285,-0.3917431,not reported,Mucinous adenocarcinoma,Stage IV,dead,179,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A285-01A-11R,0.9391,0.7305
+TCGA.3L.AA1B,-0.407481136,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-3L-AA1B-01A-11R,0.9025,0.7913
+TCGA.AA.3966,-0.375720428,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,MSI-H,CIMP.L,1,MSI/CIMP,1,10.8,34,Hepatic Flexure,M0,Mucinous,N0,T3,NO,NA,NO,Stage IIA,TCGA-AA-3966-01A-01R,NA,0.7636
+TCGA.A6.3808,-0.381710146,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-L,Cluster3,0,MSI/CIMP,0,0.778,3.45,Cecum,M0,Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-A6-3808-01A-01R,NA,0.7019
+TCGA.A6.5666,-0.37701985,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-5666-01A-01R,0.9678,0.8924
+TCGA.AD.6888,-0.379431295,not reported,"Adenocarcinoma, NOS",Stage III,dead,472,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-6888-01A-11R,0.9835,0.7802
+TCGA.AA.3552,-0.36212688,not reported,"Adenocarcinoma, NOS",Stage III,dead,396,NA,MSS,Cluster3,0,Invasive,0,0.717,1.77,Cecum,M0,Non-Mucinous,N2,T3,YES,R0,YES,Stage IIIC,TCGA-AA-3552-01A-01R,NA,0.7236
+TCGA.G4.6299,-0.392268172,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6299-01A-11R,0.8036,0.6996
+TCGA.D5.6538,-0.40024857,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6538-01A-11R,0.9839,0.9535
+TCGA.D5.5537,-0.398227836,not reported,"Adenocarcinoma, NOS",NA,dead,1381,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-5537-01A-21R,0.9103,0.8361
+TCGA.AA.3814,-0.398554901,not reported,Adenocarcinoma with mixed subtypes,Stage II,alive,NA,NA,MSS,Cluster3,0,MSI/CIMP,0,1.15,2.65,Ascending Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3814-01A-01R,NA,0.7607
+TCGA.AA.3812,-0.377612104,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster4,0,MSI/CIMP,0,1.26,2.89,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3812-01A-01R,NA,0.693
+TCGA.AA.3663,-0.398800642,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AA-3663-01A-01R,0.9107,0.8893
+TCGA.DM.A280,-0.39750122,not reported,Mucinous adenocarcinoma,Stage II,dead,236,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A280-01A-12R,0.9301,0.5422
+TCGA.AA.3869,-0.380486744,not reported,"Adenocarcinoma, NOS",Stage IV,dead,822,NA,MSS,Cluster4,0,Invasive,0,0.866,2.39,Cecum,M1,Non-Mucinous,N2,NA,NO,R2,NO,Stage IV,TCGA-AA-3869-01A-01R,NA,0.7866
+TCGA.A6.6141,-0.387646826,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6141-01A-11R,0.866,0.7243
+TCGA.A6.2672,-0.393521629,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,8.29,19,Transverse Colon,M0,Non-Mucinous,N1,T3,NO,R0,NO,Stage IIIB,TCGA-A6-2672-01A-01R,NA,0.6965
+TCGA.G4.6295,-0.387383406,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6295-01A-11R,0.8722,0.8042
+TCGA.CM.6677,-0.398961523,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6677-01A-11R,0.8565,0.6683
+TCGA.AA.A02W,-0.400641048,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSI-L,Cluster4,0,CIN,0,1.32,3.59,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-A02W-01A-01R,NA,0.8361
+TCGA.AA.A01T,-0.384063249,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster3,0,NA,0,0.608,2.68,Sigmoid Colon,M0,Non-Mucinous,N1,T3,NO,R0,NO,Stage IIIB,TCGA-AA-A01T-01A-21R,NA,0.8249
+TCGA.AM.5821,-0.350868757,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AM-5821-01A-01R,0.8092,0.6289
+TCGA.DM.A1HB,-0.420137686,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A1HB-01A-21R,0.948,0.7745
+TCGA.A6.6780,-0.336888034,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6780-01A-11R,0.7677,0.8
+TCGA.F4.6703,-0.356545552,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6703-01A-11R,0.4242,0.3651
+TCGA.AA.A01D,-0.420531932,not reported,Mucinous adenocarcinoma,Stage III,dead,334,NA,MSS,CIMP.L,0,MSI/CIMP,0,2.02,5.64,Sigmoid Colon,M0,Mucinous,N2,T3,NO,R0,NO,Stage IIIC,TCGA-AA-A01D-01A-01R,NA,0.6444
+TCGA.RU.A8FL,-0.383036087,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-RU-A8FL-01A-11R,0.9941,0.836
+TCGA.AA.3492,-0.37724968,not reported,"Adenocarcinoma, NOS",Stage II,dead,92,NA,MSI-H,NA,NA,NA,NA,NA,NA,Ascending Colon,M0,Non-Mucinous,N0,T3,NO,R0,YES,Stage IIA,TCGA-AA-3492-01A-01R,0.8819,0.8306
+TCGA.D5.6539,-0.414538679,not reported,"Adenocarcinoma, NOS",NA,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6539-01A-11R,0.9021,0.684
+TCGA.AA.3982,-0.405849345,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSI-L,Cluster3,0,CIN,0,0.814,3,Sigmoid Colon,M0,Non-Mucinous,N1,T3,NO,NA,NO,Stage IIIB,TCGA-AA-3982-01A-02R,NA,0.5632
+TCGA.QG.A5YV,-0.401288108,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-QG-A5YV-01A-11R,0.9584,0.8848
+TCGA.CM.5344,-0.407521798,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-5344-01A-21R,0.8858,0.7177
+TCGA.CM.6163,-0.42000686,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6163-01A-11R,0.8208,0.717
+TCGA.AA.3675,-0.390226223,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,CIMP.L,0,NA,NA,NA,NA,Hepatic Flexure,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3675-01A-02R,0.9229,0.8835
+TCGA.DM.A1D8,-0.399053455,not reported,"Adenocarcinoma, NOS",NA,dead,383,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A1D8-01A-11R,0.9629,0.8736
+TCGA.AU.6004,-0.410309811,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AU-6004-01A-11R,0.7837,0.6553
+TCGA.A6.3807,-0.369539775,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster4,0,MSI/CIMP,0,0.739,2.79,Sigmoid Colon,M0,Non-Mucinous,N2,T3,NO,R0,NO,Stage IIIC,TCGA-A6-3807-01A-01R,NA,0.679
+TCGA.AA.A01X,-0.393037218,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster3,0,NA,0,0.61,1.54,Sigmoid Colon,M0,Non-Mucinous,N1,T2,NO,RX,NO,Stage IIIA,TCGA-AA-A01X-01A-21R,0.9462,0.836
+TCGA.G4.6586,-0.379289861,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6586-01A-11R,0.9261,0.8531
+TCGA.AA.3516,-0.371450898,not reported,Mucinous adenocarcinoma,Stage III,dead,396,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,11.2,32.1,Ascending Colon,M0,Mucinous,N2,T3,YES,NA,NO,Stage IIIB,TCGA-AA-3516-01A-02R,NA,0.6843
+TCGA.CA.5797,-0.422837302,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CA-5797-01A-01R,0.8782,0.8122
+TCGA.D5.6533,-0.416135112,not reported,"Adenocarcinoma, NOS",NA,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6533-01A-11R,0.9011,0.7948
+TCGA.AA.A01C,-0.367054077,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster4,0,CIN,NA,NA,NA,Ascending Colon,M0,Non-Mucinous,N1,T2,NO,R0,YES,Stage IIIA,TCGA-AA-A01C-01A-01R,NA,0.7121
+TCGA.A6.6649,-0.424877483,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6649-01A-11R,0.8365,0.7857
+TCGA.AA.3939,-0.397658565,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster3,0,Invasive,0,0.673,3.37,Ascending Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3939-01A-01R,NA,0.7138
+TCGA.CK.6747,-0.387745829,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-6747-01A-11R,0.9021,0.851
+TCGA.DM.A28K,-0.418762243,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A28K-01A-21R,0.9606,0.8406
+TCGA.AA.3984,-0.408732825,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster4,0,Invasive,1,29.8,116,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3984-01A-02R,NA,0.641
+TCGA.AA.3986,-0.381471476,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,Cluster3,0,Invasive,0,0.874,2,Transverse Colon,M0,Non-Mucinous,N0,T2,YES,R0,NO,Stage I,TCGA-AA-3986-01A-02R,NA,0.7379
+TCGA.AD.6895,-0.368245656,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-6895-01A-11R,0.848,0.7422
+TCGA.D5.6535,-0.418184133,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6535-01A-11R,0.8625,0.6964
+TCGA.AA.3556,-0.389427123,not reported,Mucinous adenocarcinoma,Stage I,alive,NA,NA,MSS,CIMP.L,0,MSI/CIMP,0,0.658,1.18,Sigmoid Colon,M0,NA,N0,T2,YES,R0,NO,Stage I,TCGA-AA-3556-01A-01R,NA,0.8469
+TCGA.A6.A565,-0.409042211,not reported,Mucinous adenocarcinoma,Stage III,dead,494,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-A565-01A-31R,0.7185,0.5864
+TCGA.QG.A5YW,-0.398945612,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-QG-A5YW-01A-11R,0.8856,0.7466
+TCGA.AA.3850,-0.373538813,not reported,"Adenocarcinoma, NOS",Stage I,dead,0,NA,MSS,CIMP.L,0,Invasive,0,1.15,2.63,Transverse Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3850-01A-01R,NA,0.7903
+TCGA.AZ.6605,-0.414225756,not reported,"Adenocarcinoma, NOS",Stage III,dead,159,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-6605-01A-11R,0.7052,0.6114
+TCGA.D5.6920,-0.381747272,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6920-01A-11R,0.8786,0.8457
+TCGA.AA.3861,-0.39093516,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-L,CIMP.L,0,Invasive,NA,NA,NA,Cecum,M0,Non-Mucinous,N0,T3,NO,R0,YES,Stage IIA,TCGA-AA-3861-01A-01R,NA,0.6729
+TCGA.AZ.5407,-0.401595726,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-5407-01A-01R,0.938,0.8533
+TCGA.AZ.6600,-0.424308212,not reported,"Adenocarcinoma, NOS",Stage IV,dead,368,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-6600-01A-11R,0.8075,0.7366
+TCGA.CM.6678,-0.404413793,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6678-01A-11R,0.951,0.768
+TCGA.AD.A5EK,-0.415956552,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-A5EK-01A-11R,0.9499,0.9682
+TCGA.F4.6855,-0.411588018,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6855-01A-11R,0.7754,0.726
+TCGA.AA.3488,-0.386181219,not reported,"Adenocarcinoma, NOS",Stage IV,dead,153,NA,MSS,NA,NA,NA,NA,NA,NA,Sigmoid Colon,M1,Non-Mucinous,N2,T3,NO,R2,NO,Stage IV,TCGA-AA-3488-01A-01R,NA,0.8806
+TCGA.A6.2685,-0.3905692,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Sigmoid Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-A6-2685-01A-01R,0.7011,0.6328
+TCGA.AA.A00Z,-0.407159375,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster4,0,CIN,0,0.647,1.12,Sigmoid Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-A00Z-01A-01R,NA,0.7603
+TCGA.CM.5860,-0.416614218,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-5860-01A-01R,0.787,0.7451
+TCGA.AA.3524,-0.359570466,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,Cluster4,0,Invasive,0,0.636,1.64,Sigmoid Colon,M0,Non-Mucinous,N0,T3,YES,R0,NO,Stage IIA,TCGA-AA-3524-01A-02R,NA,0.8229
+TCGA.AA.3971,-0.39033937,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster4,0,CIN,0,0.684,1.98,Sigmoid Colon,M0,Non-Mucinous,N1,T3,NO,R0,NO,Stage IIIB,TCGA-AA-3971-01A-01R,NA,0.7108
+TCGA.AD.6548,-0.398424075,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AD-6548-01A-11R,0.8105,0.6725
+TCGA.A6.6652,-0.407240699,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6652-01A-11R,0.9645,0.9147
+TCGA.AA.3510,-0.371003614,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Transverse Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3510-01A-01R,NA,0.8091
+TCGA.AA.3548,-0.394318961,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.441,1.28,Cecum,M0,Non-Mucinous,N2,T3,NO,R0,NO,Stage IIIC,TCGA-AA-3548-01A-01R,NA,0.8262
+TCGA.AA.3994,-0.392397231,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,MSS,CIMP.H,0,MSI/CIMP,0,1.72,4.96,Transverse Colon,M0,Mucinous,N1,T3,NO,R0,NO,Stage IIIB,TCGA-AA-3994-01A-01R,NA,0.8709
+TCGA.AA.3502,-0.386490605,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSI-L,NA,NA,NA,NA,NA,NA,Transverse Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3502-01A-01R,0.9358,0.8398
+TCGA.DM.A1D4,-0.388498964,not reported,"Adenocarcinoma, NOS",Stage II,dead,2821,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A1D4-01A-21R,0.971,0.8848
+TCGA.CM.4752,-0.379908634,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Ascending Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-CM-4752-01A-01R,NA,0.5893
+TCGA.DM.A282,-0.413368315,not reported,Mucinous adenocarcinoma,Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A282-01A-12R,0.9535,0.8559
+TCGA.AA.3949,-0.339769746,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,8.59,22.7,Ascending Colon,M0,Mucinous,N1,T3,NO,R0,NO,Stage IIIB,TCGA-AA-3949-01A-01R,NA,0.769
+TCGA.CA.6716,-0.3936224,not reported,"Papillary adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CA-6716-01A-11R,0.936,0.8988
+TCGA.CM.6164,-0.389252099,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6164-01A-11R,0.9019,0.6806
+TCGA.CM.6674,-0.385003783,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6674-01A-11R,0.8474,0.7055
+TCGA.AA.3811,-0.410589142,not reported,Adenocarcinoma with neuroendocrine differentiation,Stage III,dead,306,NA,MSI-H,Cluster4,1,MSI/CIMP,1,9.46,27.6,Hepatic Flexure,M0,Non-Mucinous,N2,T3,NO,R0,NO,Stage IIIB,TCGA-AA-3811-01A-01R,NA,0.6996
+TCGA.AA.3673,-0.387332136,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,CIMP.L,0,Invasive,0,0.542,2.38,Transverse Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3673-01A-01R,NA,0.788
+TCGA.AZ.6608,-0.396988523,not reported,"Adenocarcinoma, NOS",Stage III,dead,59,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-6608-01A-11R,0.9872,0.9534
+TCGA.AA.3662,-0.379326988,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AA-3662-01A-01R,0.8406,0.8008
+TCGA.D5.5539,-0.415450926,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-5539-01A-01R,0.8308,0.7091
+TCGA.A6.4107,-0.393542844,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Ascending Colon,M0,Non-Mucinous,N1b,T3,NO,R0,NO,Stage IIIB,TCGA-A6-4107-01A-02R,NA,0.7697
+TCGA.CM.6170,-0.405974867,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6170-01A-11R,0.8533,0.7895
+TCGA.AA.A01Z,-0.408860115,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,CIMP.L,0,NA,0,1.12,2.94,Ascending Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-A01Z-01A-11R,0.9697,0.9404
+TCGA.AA.A00N,-0.404472134,not reported,Mucinous adenocarcinoma,Stage II,dead,122,NA,MSI-L,Cluster4,0,MSI/CIMP,1,40.8,152,Cecum,M0,Mucinous,N0,NA,NO,R0,NO,Stage IIB,TCGA-AA-A00N-01A-02R,NA,0.8093
+TCGA.AA.A00E,-0.385403334,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,8.7,23,Ascending Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-A00E-01A-01R,NA,0.7108
+TCGA.AY.A8YK,-0.407047996,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AY-A8YK-01A-11R,0.9477,0.9395
+TCGA.AA.A01K,-0.399560848,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster3,0,MSI/CIMP,0,1.73,5.58,Sigmoid Colon,M0,Non-Mucinous,N2,T3,NO,R0,NO,Stage IIIC,TCGA-AA-A01K-01A-01R,NA,0.7778
+TCGA.G4.6626,-0.364301424,not reported,"Adenocarcinoma, NOS",Stage II,dead,1422,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6626-01A-11R,0.9692,0.7946
+TCGA.A6.6140,-0.39840286,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-6140-01A-11R,0.9463,0.8851
+TCGA.5M.AAT6,-0.384855278,not reported,"Adenocarcinoma, NOS",Stage IV,dead,290,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-5M-AAT6-01A-11R,0.7275,0.6712
+TCGA.F4.6460,-0.389649881,not reported,"Adenocarcinoma, NOS",Stage III,dead,972,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6460-01A-11R,0.8504,0.7696
+TCGA.AA.3553,-0.383442709,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSI-L,Cluster4,0,CIN,0,0.303,1.21,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3553-01A-01R,NA,0.7409
+TCGA.AA.3549,-0.391502662,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,CIMP.L,0,CIN,0,0.591,2.03,Cecum,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3549-01A-02R,NA,0.788
+TCGA.CM.4748,-0.341157564,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Transverse Colon,M0,Non-Mucinous,N1b,T4a,NO,R0,YES,Stage IIIB,TCGA-CM-4748-01A-01R,NA,0.7527
+TCGA.CA.6719,-0.40617641,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CA-6719-01A-11R,0.814,0.7307
+TCGA.AA.3864,-0.382360741,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-H,Cluster3,0,MSI/CIMP,1,26.3,65.1,Cecum,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3864-01A-01R,NA,0.7992
+TCGA.CM.6679,-0.404721411,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6679-01A-11R,0.8152,0.6281
+TCGA.CM.5349,-0.401905112,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-5349-01A-21R,0.8342,0.7367
+TCGA.AA.3968,-0.40959557,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,Cluster3,0,CIN,NA,NA,NA,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3968-01A-01R,NA,0.809
+TCGA.AA.A01Q,-0.367425341,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-H,CIMP.L,0,MSI/CIMP,1,9.71,28.5,Ascending Colon,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-A01Q-01A-01R,NA,0.9295
+TCGA.DM.A28E,-0.420775905,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A28E-01A-11R,0.9794,0.9195
+TCGA.G4.6628,-0.36330078,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6628-01A-11R,0.7433,0.6779
+TCGA.CM.6166,-0.4024514,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6166-01A-11R,0.9564,0.8595
+TCGA.CK.6748,-0.410396439,not reported,Mucinous adenocarcinoma,Stage IV,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-6748-01A-11R,0.7988,0.8676
+TCGA.AA.A00O,-0.375034474,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSI-L,Cluster4,0,CIN,0,0.957,2.77,Sigmoid Colon,M0,Non-Mucinous,N2,T3,NO,R0,NO,Stage IIIC,TCGA-AA-A00O-01A-02R,NA,0.7934
+TCGA.DM.A28H,-0.415442086,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A28H-01A-11R,0.9733,0.8688
+TCGA.AZ.4616,-0.379307541,not reported,"Adenocarcinoma, NOS",Stage IV,dead,156,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AZ-4616-01A-21R,0.8922,0.6906
+TCGA.AA.3854,-0.393760298,not reported,Mucinous adenocarcinoma,Stage I,alive,NA,NA,MSI-L,CIMP.L,0,Invasive,0,1.45,4.1,Sigmoid Colon,M0,Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3854-01A-01R,NA,0.8672
+TCGA.AA.3678,-0.402693605,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster4,0,CIN,0,0.729,2.19,Sigmoid Colon,M0,Non-Mucinous,N1,T2,NO,R0,NO,Stage IIIA,TCGA-AA-3678-01A-01R,NA,0.8411
+TCGA.AA.3875,-0.397421663,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,Cluster3,0,CIN,0,1.02,3.63,Ascending Colon,M0,Non-Mucinous,N0,T1,NO,R0,NO,Stage I,TCGA-AA-3875-01A-01R,NA,0.576
+TCGA.AA.3872,-0.392840979,not reported,"Adenocarcinoma, NOS",Stage IV,alive,NA,NA,MSS,Cluster4,0,MSI/CIMP,0,0.726,1.45,Sigmoid Colon,M1,Non-Mucinous,N2,NA,NO,R2,NO,Stage IV,TCGA-AA-3872-01A-01R,NA,0.7568
+TCGA.AZ.4315,-0.368369411,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Cecum,M0,Non-Mucinous,N0,T3,NO,R0,NA,Stage IIA,TCGA-AZ-4315-01A-01R,0.8901,0.79
+TCGA.CM.6171,-0.393671902,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6171-01A-11R,0.9107,0.8398
+TCGA.AA.3518,-0.375025635,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,7.15,19.5,Cecum,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3518-01A-02R,NA,0.6668
+TCGA.CK.6746,-0.361628326,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CK-6746-01A-11R,0.852,0.829
+TCGA.A6.2675,-0.40910232,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-2675-01A-02R,0.7547,0.6193
+TCGA.AA.3517,-0.396924877,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-L,Cluster4,0,CIN,0,0.435,1.22,Splenic Flexure,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3517-01A-01R,NA,0.7623
+TCGA.AA.3506,-0.401360592,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,NA,NA,NA,NA,NA,NA,Hepatic Flexure,M0,Non-Mucinous,N0,T2,YES,R0,YES,Stage I,TCGA-AA-3506-01A-01R,0.8641,0.7979
+TCGA.AA.3710,-0.370133796,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,MSI-H,CIMP.H,1,MSI/CIMP,1,13.4,34.3,Hepatic Flexure,M0,Non-Mucinous,N0,T3,NO,R0,NO,Stage IIA,TCGA-AA-3710-01A-01R,NA,0.8956
+TCGA.F4.6569,-0.397778784,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-F4-6569-01A-11R,0.6678,0.6038
+TCGA.A6.4105,-0.404077888,not reported,"Adenocarcinoma, NOS",Stage II,dead,442,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-A6-4105-01A-02R,0.7925,0.7533
+TCGA.G4.6322,-0.393449144,not reported,Mucinous adenocarcinoma,Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-G4-6322-01A-11R,0.9237,0.8249
+TCGA.DM.A1D9,-0.407329095,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-DM-A1D9-01A-11R,0.9628,0.8888
+TCGA.A6.2678,-0.380486744,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,MSS,Cluster3,0,Invasive,0,0.305,2.66,Transverse Colon,M0,Non-Mucinous,N1,T3,NO,R0,NO,Stage IIIB,TCGA-A6-2678-01A-01R,NA,0.767
+TCGA.CM.6161,-0.38409684,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6161-01A-11R,0.8613,0.8054
+TCGA.AA.3660,-0.389275082,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-AA-3660-01A-01R,0.9175,0.893
+TCGA.D5.6926,-0.403372487,not reported,"Adenocarcinoma, NOS",Stage III,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-D5-6926-01A-11R,0.7962,0.6854
+TCGA.CM.6676,-0.399111796,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-CM-6676-01A-11R,0.9243,0.7789
+TCGA.AY.4071,-0.378052316,not reported,"Adenocarcinoma, NOS",Stage I,dead,29,NA,MSS,Cluster3,0,CIN,0,1.14,3.15,NA,NA,NA,N0,T1,NO,R0,NO,Stage I,TCGA-AY-4071-01A-01R,NA,0.7281
+TCGA.SS.A7HO,-0.397202441,not reported,"Adenocarcinoma, NOS",Stage II,alive,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,TCGA-SS-A7HO-01A-21R,0.9817,0.7578
+TCGA.AA.3544,-0.361301261,not reported,"Adenocarcinoma, NOS",Stage I,alive,NA,NA,MSS,Cluster3,0,CIN,0,0.889,1.91,Sigmoid Colon,M0,Non-Mucinous,N0,T2,NO,R0,NO,Stage I,TCGA-AA-3544-01A-01R,NA,0.7673
+TCGA.AA.A02F,-0.41653643,not reported,"Carcinoma, NOS",Stage IV,alive,NA,NA,MSS,Cluster4,0,CIN,0,0.786,1.97,Sigmoid Colon,M1,Non-Mucinous,N1,T3,NO,R2,NO,Stage IV,TCGA-AA-A02F-01A-01R,NA,1

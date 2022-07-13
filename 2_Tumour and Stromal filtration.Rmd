@@ -1,0 +1,431 @@
+---
+title: "Tumour and Stromal Filtration for 82-gene candidate NK sig (post scRNAseq integration"
+author: "C Shembrey S Foroutan"
+date: 
+output:
+  html_document: default
+  pdf_document: default
+---
+In this document, we further refine our NK geneset by filtering out (i) genes that have higher expression in non-NK immune cells and (ii) genes that have high expression in tumour/epithelial cells
+
+# Setup
+```{r results = 'hide', message = FALSE, warning = FALSE}
+library(limma)
+library(scales)
+library(ggplot2)
+library(ggrepel)
+library(plotly)
+library(gridExtra)
+library(grid)
+library(ggpubr) # for statistics
+library(RColorBrewer)
+library(matrixStats)
+library(plyr)
+library(dplyr)
+library(tidyr)
+
+source("./script/biplot_ggplot.R")
+```
+
+# First, we import the candidate bulk and scRNAseq candidate genes (82 genes):
+```{r}
+NKUpSet_SourceTable <- read.table("../NK_candidates_Zhang_SMARTseq_10X_sc_bulk_Shembrey_Foroutan.txt", sep = "\t", header = T)
+NKGenes <- alias2SymbolUsingNCBI(NKUpSet_SourceTable$Genes, "../data/Homo_sapiens.gene_info", required.columns = c("GeneID", "Symbol"))
+
+rownames(NKGenes) <- NKGenes$GeneID
+all(NKUpSet_SourceTable$Genes == NKGenes$Symbol) # T
+rownames(NKUpSet_SourceTable) <- NKGenes$GeneID
+```
+
+# Next, we generate table of NK Signature sources:
+```{r}
+CiberAct <- read.csv("../data/NK_Signatures/Compiled/Cibersort_NK-Active.csv")
+CiberAct <- NKGenes$Symbol %in% CiberAct$Genes
+SumTable <-  cbind(NKGenes, CiberAct)
+
+CiberRest <- read.csv("../data/NK_Signatures/Compiled/Cibersort_NK-Resting.csv")
+Cibersort_Resting <- NKGenes$Symbol %in% CiberRest$Genes
+SumTable <-  cbind(SumTable, Cibersort_Resting)
+
+CursonsSups <- read.csv("../data/NK_Signatures/Compiled/CursonsSups_112Genes.csv")
+CursonsSups <- NKGenes$Symbol %in% CursonsSups$Cursons.Supplementary.Data
+SumTable <-  cbind(SumTable, CursonsSups)
+
+MergedDEGs_Bulk <- readRDS("../data/KeyData/blood_nk/NK_genelist_2bld.RDS")
+NK_upSet <- MergedDEGs_Bulk$NK_upSet
+DEGs_2BldBulk <- NKGenes$Symbol %in% NK_upSet
+SumTable <-  cbind(SumTable, DEGs_2BldBulk)
+
+DEGs_NKvsPanT <- MergedDEGs_Bulk$NK_panT_up
+DEGs_NKvsPanT <- NKGenes$Symbol %in% DEGs_NKvsPanT
+SumTable <-  cbind(SumTable, DEGs_NKvsPanT)
+
+RecepAct <- read.csv("../data/NK_Signatures/Compiled/NK_ReceptorActivating.csv")
+RecepInhib <- read.csv("../data/NK_Signatures/Compiled/NK_ReceptorInhibitory.csv")
+Receptors <- rbind(RecepAct, RecepInhib) # remove dual function receptors
+Receptors <- NKGenes$Symbol %in% Receptors$Genes
+SumTable <-  cbind(SumTable, Receptors)
+
+WangGenes <- read.csv("../data/GeneSignatures/Immune_stroma/Stroma_Immune_markers_Wang_2017_Gastroenterology.csv", stringsAsFactors = F)
+WangGenes <- WangGenes[WangGenes$Marker.type == "NK cell", ]
+WangGenes <- WangGenes$Gene.Name
+WangGenes <- NKGenes$Symbol %in% WangGenes
+SumTable <-  cbind(SumTable, WangGenes)
+
+all(rownames(SumTable) == rownames(NKUpSet_SourceTable)) # T
+NKUpSet_SourceTable2 <-  as.data.frame(lapply(NKUpSet_SourceTable,FUN = as.logical))
+all((NKUpSet_SourceTable2$Pass10X == "1") == (NKUpSet_SourceTable$Pass10X == "TRUE")) # T
+SumTable <- c(SumTable, NKUpSet_SourceTable2)
+SumTable <- as.data.frame(SumTable)
+
+# Don't include these columns in Sum of Sources calculations:
+ExclCols <- c("GeneID", "Symbol",   "Genes",  "SingleCell",   "Bulk",                  "Common_sc_bulk",  "PassSMARTseq",   "Pass10X", "Zero_95Percentile_10X")
+  
+SumTable$SumSources <- rowSums(SumTable[! colnames(SumTable) %in% ExclCols])
+```
+
+# First, we import bulk RNAseq data from two sources of sorted PBMCs (GSE60424 and GSE107011). We will use these to determine which genes have higher expression in NK cells relative to other immune cell types.
+```{r}
+# Linsley Data (GSE60424)
+dataList <- readRDS("../data/NK_Signatures/CancerBlood_dataList_CRC_logRPKM.RDS") 
+LinsBld <- dataList$bldCells_logRPKM
+Lins <- LinsBld[rownames(LinsBld) %in% NKGenes$GeneID, ] 
+
+LinsAnnot <- dataList$bldCells_annot 
+LinsAnnot$celltype_s <- as.character(LinsAnnot$celltype_s)
+LinsNKs <- LinsAnnot[LinsAnnot$celltype_s == "NK", ]
+LinsNKs <- rownames(LinsNKs)
+Lins_NKs <- Lins[ , colnames(Lins) %in% LinsNKs] # only the 4 NK samples
+Lins_NKs <- as.data.frame(Lins_NKs)
+Lins_NKs <- Lins_NKs[NKGenes$GeneID, ]
+rownames(Lins_NKs) <- NKGenes$Symbol
+
+# Xu Data
+Xu <-  read.table("../data/KeyData/blood_nk/XuBulk_logTPMFilt.txt", check.names = F) # 114 samples
+Xu <- Xu[rownames(Xu) %in% NKGenes$GeneID, ] 
+XuAnnot <- read.csv("../data/KeyData/blood_nk/XuBulk_Annot.csv")
+rownames(XuAnnot) <- XuAnnot$Samples
+XuAnnot <- XuAnnot[XuAnnot$CellType == "NK", ]
+Xu_NKs <- rownames(XuAnnot)
+Xu_NKs <- Xu[ , colnames(Xu) %in% Xu_NKs] # only the 4 NK samples
+Xu_NKs <- Xu_NKs[NKGenes$GeneID, ]
+rownames(Xu_NKs) <- NKGenes$Symbol
+```
+
+# Next, we import tumour cell data from the Cancer Cell Line Encyclopedia (CCLE) and another dataset (GSE90830, Wang et al.,) containing 44 colorectal cell lines. We will use these to filter out candidate genes that have relatively high expression in tumour cells
+```{r}
+# CCLE Data
+dataList <- readRDS("../data/NK_Signatures/CancerBlood_dataList_CRC_logRPKM.RDS") 
+CCLE <- dataList$ccle_logRPKM
+
+# CCLE   
+comGenes3 <- intersect(NKGenes$GeneID, rownames(CCLE))
+CCLE_NKSig <- CCLE[comGenes3, ]
+dim(CCLE_NKSig) # 50 x 57 --> we miss 2 genes
+
+missingGenes3 <- NKGenes$GeneID[!NKGenes$GeneID %in% rownames(CCLE)]
+missingMat3 <- matrix(NA, nrow = length(missingGenes3), ncol = ncol(CCLE))
+rownames(missingMat3) <- missingGenes3
+
+CCLE_NKSig <- rbind(CCLE_NKSig, missingMat3)
+CCLE_NKSig <- CCLE_NKSig[NKGenes$GeneID, ]
+rownames(CCLE_NKSig) <- NKGenes$Symbol
+# Wang Data
+Wang <- dataList$wangCLs_logRPKM
+
+comGenes4 <- intersect(NKGenes$GeneID, rownames(Wang))
+Wang_NKSig <- Wang[comGenes4, ]
+dim(Wang_NKSig) 
+missingGenes4 <- NKGenes$GeneID[!NKGenes$GeneID %in% rownames(Wang)]
+missingMat4 <- matrix(NA, nrow = length(missingGenes4), ncol = ncol(Wang))
+rownames(missingMat4) <- missingGenes4
+
+Wang_NKSig <- rbind(Wang_NKSig, missingMat4)
+Wang_NKSig <- Wang_NKSig[NKGenes$GeneID, ]
+rownames(Wang_NKSig) <- NKGenes$Symbol
+```
+
+```{r fig.width = 20, fig.height = 10}
+# make list of tumour data
+TumDataList <- list(CCLE_NKSig = CCLE_NKSig,
+                    Wang_NKSig = Wang_NKSig)
+
+TumDataList_names <- c("CCLE_NKSig",
+                       "Wang_NKSig")
+
+# get row medians for biplot point labels (later)
+rowMedsTumData <- as.data.frame(lapply(TumDataList, function(x){ 
+   rowMedians(as.matrix(x))
+  }))
+
+CCLE_NKSig <- as.data.frame(CCLE_NKSig)
+CCLE_NKSig$RowMeds <- rowMedsTumData$CCLE_NKSig
+all(rowMedians(as.matrix(CCLE_NKSig[ , -c(58)])) == CCLE_NKSig$RowMeds, na.rm = T)
+CCLE_NKSig$PosRowMeds <- CCLE_NKSig$RowMeds
+CCLE_NKSig$PosRowMeds <- ifelse(CCLE_NKSig$PosRowMeds >2 , rownames(CCLE_NKSig), "")
+CCLE_NKSig$PosRowMeds[is.na(CCLE_NKSig$PosRowMeds)] <- ""
+
+Wang_NKSig <- as.data.frame(Wang_NKSig)
+Wang_NKSig$RowMeds <- rowMedsTumData$Wang_NKSig
+all(rowMedians(as.matrix(Wang_NKSig[ , -c(45)])) == Wang_NKSig$RowMeds, na.rm = T)
+Wang_NKSig$PosRowMeds <- Wang_NKSig$RowMeds
+Wang_NKSig$PosRowMeds <- ifelse(Wang_NKSig$PosRowMeds >0 , rownames(Wang_NKSig), "")
+Wang_NKSig$PosRowMeds[is.na(Wang_NKSig$PosRowMeds)] <- ""
+
+# generate biplot annotations
+sourceAnnot <- SumTable$SumSource
+names(sourceAnnot) <- SumTable$Symbol
+
+# Tum data vs NKdata_Lins
+# The threhold should remain at 2 for the CCLE data, then reduced to 0 for the org and Wang data
+
+# CCLE
+pointAnnotCCLE <- CCLE_NKSig$PosRowMeds
+names(pointAnnotCCLE) <- rownames(CCLE_NKSig)
+
+BP1 <- biplot(
+  data.expr = Lins_NKs,
+  data.noexpr = TumDataList$CCLE_NKSig,
+  data.names = c("NK Cells (GSE60424)", "CCLE"),
+  data.expr.th = 0.5,
+  data.noexpr.th = 0.5,
+  annot = sourceAnnot,
+  annot.name = "Sum of Sources",
+  point.labels = pointAnnotCCLE,
+  text.size = 0.75
+  ) +
+ geom_vline(xintercept = 2, col = "darkred", linetype = "dashed") +
+ theme(aspect.ratio = 0.4, text = element_text(size = 22))
+
+# Wang Cell Lines
+pointAnnotWang <- Wang_NKSig$PosRowMeds
+names(pointAnnotWang) <- rownames(Wang_NKSig)
+
+BP2 <- biplot(
+  data.expr = Lins_NKs,
+  data.noexpr = TumDataList$Wang_NKSig,
+  data.names = c("NK Cells (GSE60424)", "CRC cell lines (GSE90830)"),
+  data.expr.th = 0.5,
+  data.noexpr.th = 0.5,
+  annot = sourceAnnot,
+  annot.name = "Sum of Sources",
+  point.labels = pointAnnotWang,
+  text.size = 0.75
+  ) +
+  geom_vline(xintercept = 0, col = "darkred", linetype = "dashed") +
+  theme(aspect.ratio = 0.4, text = element_text(size = 22))
+
+PlotTitle <- textGrob(paste0("NK vs tumour cell data: median expression of biplot-filtered NK signature genes (from both bulk and scRNAseq) in Linsley Data \n Threshold = 0, keep bottom right quadrant"), gp=gpar(fontface="bold", fontsize=20))
+
+#pdf("200708_TumFiltBiplots_Linsley_82BulkAndscRNAseqGenes.pdf", width = 30, height = 5, useDingbats = F)
+grid.arrange(BP1, BP2, nrow = 1)
+dev.off()
+
+# get the genes that fail (ie. are expressed too highly in tumour data):
+
+# Remember to remove the new RowMeds and RowMedsPos columns
+data.expr.th = 0.5
+data.noexpr.th = 0.5
+
+Tum_failLins1 <- names(which(
+              #apply(Lins_NKs, 1, quantile, probs = data.expr.th, na.rm = T) <= 4 & 
+              apply(CCLE_NKSig[ , -c(58:59)], 1, quantile, probs = data.noexpr.th, na.rm = T) >= 2))
+
+Tum_failLins2 <- names(which(
+              #apply(Lins_NKs, 1, quantile, probs = data.expr.th, na.rm = T) <= 4 & 
+              apply(Wang_NKSig[ , -c(45:46)], 1, quantile, probs = data.noexpr.th, na.rm = T) >= 0))
+
+Final <- Reduce(intersect, list(Tum_failLins1, Tum_failLins2))
+FinalUnion <- Reduce(union, list( Tum_failLins1, Tum_failLins2))
+
+## Repeat for Xu data:
+
+# Tum data vs NKdata_Xu
+#pdf("../200501_Biplots_Candidate49Genes_TumourFiltration_Xu_withLabels.pdf", width = 25, height = 4, useDingbats = F)
+
+# CCLE
+BP1X <- biplot(
+  data.expr = Xu_NKs,
+  data.noexpr = TumDataList$CCLE_NKSig,
+  data.names = c("NK Cells (GSE107011)", "CCLE"),
+  data.expr.th = 0.5,
+  data.noexpr.th = 0.5,
+  annot = sourceAnnot,
+  annot.name = "Sum of Sources",
+  point.labels = pointAnnotCCLE,
+  text.size = 0.75
+  ) +
+  geom_vline(xintercept = 2, col = "darkred", linetype = "dashed") +
+ theme(aspect.ratio = 0.4, text = element_text(size = 22))
+
+# Wang Cell Lines
+BP2X <- biplot(
+  data.expr = Xu_NKs,
+  data.noexpr = TumDataList$Wang_NKSig,
+  data.names = c("NK Cells (GSE107011)", "CRC cell lines (GSE90830)"),
+  data.expr.th = 0.5,
+  data.noexpr.th = 0.5,
+  annot = sourceAnnot,
+  annot.name = "Sum of Sources",
+  point.labels = pointAnnotWang,
+  text.size = 0.75
+  ) +
+  geom_vline(xintercept = 0, col = "darkred", linetype = "dashed") +
+  theme(aspect.ratio = 0.4, text = element_text(size = 22))
+
+#pdf("200708_TumFiltBiplots_Xu_82BulkAndscRNAseqGenes.pdf", width = 30, height = 5, useDingbats = F)
+grid.arrange(BP1X, BP2X, nrow = 1)
+dev.off()
+
+# get the genes that fail (again, update thresholds for Org and Wang)
+Tum_failXu1 <- names(which(
+              #apply(Xu_NKs, 1, quantile, probs = data.expr.th, na.rm = T) <= 5 & 
+              apply(CCLE_NKSig[ , -c(58:59)], 1, quantile, probs = data.noexpr.th, na.rm = T) >= 2))
+
+Tum_failXu2 <- names(which(
+              #apply(Xu_NKs, 1, quantile, probs = data.expr.th, na.rm = T) <= 5 & 
+              apply(Wang_NKSig[ , -c(45:46)], 1, quantile, probs = data.noexpr.th, na.rm = T) >= 0))
+
+Final2 <- Reduce(intersect, list(Tum_failXu1, Tum_failXu2))
+FinalUnion2 <- Reduce(union, list(Tum_failXu1, Tum_failXu2))
+
+```
+
+# Remove the tumour-high genes 
+```{r}
+Union2Bld <- union(Final, Final2) 
+Union2Bld_Int <- intersect(Final, Final2) 
+NKGenes <- NKGenes[! NKGenes$Symbol %in% Union2Bld, ] 
+```
+
+# Next, we filter against stromal and tumour-supportive cell types (ie. other non-immune, non-tumour cells, like epithelial cells and fibroblasts) using bulk RNAseq data of these sorted populations from GSE39397 (Calon et al.,)
+
+```{r fig.width=20, fig.height=20}
+Stroma <- read.csv("../data/KeyData/CRC_Stroma/Calon8pts_CRCStroma_FilteredCounts.csv", stringsAsFactors = F)
+rownames(Stroma) <- Stroma$X
+Stroma <- Stroma[ , -c(1)]
+
+# TumFilt <- read.csv("./data/NK_Signatures/Post_scRNAseq_TumStrmFIlt.csv", stringsAsFactors = F)
+# TumFilt <- TumFilt[TumFilt$Fail_Source == "Fail_Tumour", ] # 12 genes
+# 
+# TumFilt <- NKGenes[NKGenes$Symbol %in% TumFilt$Genes, ]
+# rownames(TumFilt) <- TumFilt$GeneID
+# 
+# Stroma_NKSigTum <- Stroma
+# comGenesStr <- intersect(TumFilt$GeneID, rownames(Stroma_NKSigTum))
+# Stroma_NKSigTum <- Stroma_NKSigTum[comGenesStr, ] # no missing genes
+# all(rownames(Stroma_NKSigTum) == TumFilt$GeneID)
+
+
+comGenesStr <- intersect(NKGenes$GeneID, rownames(Stroma))
+Stroma2 <- Stroma[comGenesStr, ] 
+missingGenesStr <- NKGenes$GeneID[!NKGenes$GeneID %in% rownames(Stroma)]
+missingMatStr <- matrix(NA, nrow = length(missingGenesStr), ncol = ncol(head(Stroma2)))
+rownames(missingMatStr) <- missingGenesStr
+colnames(missingMatStr) <- colnames(Stroma2)
+Stroma <- rbind(Stroma2, missingMatStr) 
+
+StromaAnnot <- read.csv("../data/KeyData/CRC_Stroma/Calon8pts_CRCStroma_GSE39397-GPL13158_Annot.csv", stringsAsFactors = F)
+# all(StromaAnnot$GEO_accession == colnames(Stroma)) --> T
+
+# add cell type annots
+Stroma <- as.data.frame(t(Stroma))
+all(rownames(Stroma) == StromaAnnot$GEO_accession) # T
+Stroma$CellType <- StromaAnnot$CellType
+
+# get gene symbols
+StromaReOrd <- Stroma[ , c(NKGenes$GeneID, "CellType")]
+all(colnames(StromaReOrd)[1:69] == NKGenes$GeneID) # T
+colnames(StromaReOrd)[1:69] <- NKGenes$Symbol
+StromaReOrd$Sample <- rownames(StromaReOrd)
+
+library(reshape2)
+meltTest <- melt(StromaReOrd, id.vars = c("CellType", "Sample"), na.rm = T)
+colnames(meltTest)[3:4] <- c("Gene", "Expression")
+meltTest$CellType <- factor(meltTest$CellType, levels = c("Leukocytes", "Stromal cells", "Epithelial cells", "Fibroblasts"))
+
+# check the ordering
+#meltTest2 <- meltTest[order(meltTest$CellType), ]
+#meltTest <- meltTest[complete.cases(meltTest$Gene), ]
+
+Alphabetise <- as.character(unique(meltTest$Gene))
+Alphabetise <- sort(Alphabetise)
+meltTest$Gene = factor(meltTest$Gene, levels=Alphabetise)
+
+# meltTest_Split <- split(meltTest, f = as.factor(meltTest$Gene), drop = F)
+# meltTest_Split_names <- levels(meltTest$Gene)
+# names(meltTest_Split) <- meltTest_Split_names
+```
+
+# Generate Figure S3
+```{r}
+# for stats:
+SigLvls <- list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+
+#pdf("Post_SingleCell_StromalFilt.pdf", useDingbats = F)
+my_comparisons <- list(c("Leukocytes", "Stromal cells"), c("Leukocytes", "Fibroblasts"),c("Leukocytes", "Epithelial cells"))
+
+#pdf("200708_Faceted_StromalFiltBoxplots.pdf", width = 20, height = 30)
+ggplot(meltTest, aes(x = CellType, y = Expression, fill = CellType, color = CellType)) + 
+        geom_boxplot(alpha = 0.6, outlier.colour = NA, color = "black") +
+        geom_jitter(width = 0.1, size = 3) +
+        ggtitle("Stromal Filtration (82 candidate genes; bulk + scRNAseq candidates)") +
+        labs(x= NA, y = "Expression (logRPKM)") +
+        scale_fill_manual(values = c("purple", "goldenrod1", "springgreen4", "cornflowerblue")) +
+        scale_color_manual(values = c("purple", "darkgoldenrod", "springgreen4", "cornflowerblue")) +
+        stat_compare_means(comparisons = my_comparisons, label = "p.signif", size = 5) +
+        # scale_y_continuous(expand = expand_scale(mult = c(0, 0.15))) +
+        scale_y_continuous(expand = expand_scale(mult = 0.15)) +
+        facet_wrap(~Gene, scales = "free_y", ncol = 7) +
+        theme_light() +
+        theme(legend.position = "none",
+               axis.title = element_blank(),
+               axis.text.x = element_blank(),
+               plot.title = element_text(hjust = 0.5, size = 22),
+               #aspect.ratio = 1,
+               text = element_text(size = 14),
+               panel.grid.minor = element_blank(),
+               strip.background = element_rect(fill = "black")
+              )
+dev.off()
+```
+
+```{r}
+TestMeans <- meltTest
+TestMeans$Gene_CellType <- paste(TestMeans$Gene, TestMeans$CellType, sep = "_")
+TestMeans$Gene_CellType <- as.factor(TestMeans$Gene_CellType)
+
+TestMeans <- ddply(TestMeans, .(Gene_CellType), summarise, mean=mean(Expression)) # 1736 rows
+TestMeans$ToSplit <- TestMeans$Gene_CellType
+TestMeans <- separate(data = TestMeans, col="ToSplit", into = c("Gene", "CellType"), sep = "_")
+TestMeans$Gene <- as.factor(TestMeans$Gene)
+TestMeans$CellType <- as.factor(TestMeans$CellType)
+colnames(TestMeans)[2] <- "MeanExpr"
+
+ByGene <- split(TestMeans, TestMeans$Gene)
+
+
+ByGene2 <- lapply(ByGene, function(x){
+  x %>% mutate(NormalisedToNK = MeanExpr / MeanExpr[CellType == "Leukocytes"])})
+TestMeans <- bind_rows(ByGene2, .id = "")
+TestMeans <- TestMeans[ , -c(1)]
+```
+
+# Generate figure 2C
+```{r fig.width=20, fig.height=8}
+TestMeans$CellType <- factor(TestMeans$CellType, levels = c("Leukocytes", "Stromal cells", "Fibroblasts", "Epithelial cells"))
+TestMeans <- TestMeans[order(TestMeans$CellType), ]
+TestMeans$Gene <- factor(TestMeans$Gene, levels = unique(TestMeans$Gene))
+
+pdf("StromalFilt_BoxPlotSummary_Linegraph.pdf", height = 7, width = 20, useDingbats = F)
+ggplot(TestMeans, 
+       aes_string(x="Gene", y = "NormalisedToNK", color = "CellType", group = "CellType")) + 
+  geom_point(size = 5) +
+  ylab("Expression (Normalised to Leukocytes)") +
+  geom_path() +
+  scale_color_manual(values = c("purple", "goldenrod", "springgreen4", "cornflowerblue")) +
+  theme_light() +
+  theme(text = element_text(size = 20), 
+        axis.text.x = element_text(angle = 90))
+dev.off()
+```

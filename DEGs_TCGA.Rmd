@@ -1,0 +1,421 @@
+---
+title: "DEGs - TCGA and Marisa"
+author: "C Shembrey"
+date: "03/09/2020"
+output: html_document
+---
+
+# Setup
+```{r warning=FALSE, quietly = T}
+library(limma)
+library(ggplot2)
+library(RColorBrewer)
+library(edgeR)
+library(matrixStats)
+```
+
+# Import data and NK score/annotation info
+```{r}
+TCGA_DGEList <- readRDS("../data/KeyData/TCGA/DGEList_Filtered_TCGA_COAD_ForCarolyn.RDS")
+
+# filter to samples of interest:
+TCGA.Scores <- read.csv("./data/TCGABind_ForSurvivalAnalysis.csv", stringsAsFactors = F)
+dim(TCGA.Scores) # 454 samples --> 10% = 45 samples
+
+TCGA.Scores <- TCGA.Scores[order(TCGA.Scores$NKUp), ]
+TCGA.Scores$X <- gsub("\\.", "-", TCGA.Scores$X)
+
+# define the low- and high- NK scores groupings as the bottom and top 10% of samples, respectively:
+NKLow <- TCGA.Scores$X[1:45]
+NKHigh <- TCGA.Scores$X[410:454]
+NKTotal <- c(NKLow, NKHigh)
+
+# make 
+NKTotal <- gsub("\\.", "-", NKTotal)
+
+TCGA_DGEList <- TCGA_DGEList[ , NKTotal] # 13858 genes x 90 samples 
+```
+
+# Check sample annots for the groupings:
+```{r}
+Coad_Annot <- readRDS("../data/KeyData/TCGA/COAD_Annot_CleanedByCS.RDS")
+rownames(Coad_Annot) <- gsub("\\.", "-", rownames(Coad_Annot))
+
+Coad_Annot <- Coad_Annot[NKTotal, ] # 90 x 27
+all(rownames(Coad_Annot) == NKTotal) # T
+Coad_Annot$NK_Score <- NA
+Coad_Annot$NK_Score[1:45] <- "NK_Low"
+Coad_Annot$NK_Score[46:90] <- "NK_High"
+
+table(Coad_Annot$NK_Score, Coad_Annot$tumor_stage) # maybe trend towards NK_High in early stages?
+table(Coad_Annot$NK_Score, Coad_Annot$vital_status) # no diff between groups
+table(Coad_Annot$NK_Score, Coad_Annot$Subtype_MSI_Status) # all MSI-H = NK_High (not so surprising)
+
+# add grouping info to DGEList object
+all(TCGA_DGEList$samples$patient == NKTotal) # T
+TCGA_DGEList$samples$NK_Score <- ""
+TCGA_DGEList$samples$NK_Score[1:45] <- "NK_Low"
+TCGA_DGEList$samples$NK_Score[46:90] <- "NK_High"
+```
+# Create Design/Contrasts
+```{r}
+CS_Design <- colnames(TCGA_DGEList$counts)
+CS_NKScore <- c(rep("NK_Low", times = 45), rep("NK_High", times = 45))
+
+CS_Design <- cbind(CS_Design, CS_NKScore)
+CS_Design <- data.frame(CS_Design)
+CS_Group <- factor(CS_Design$CS_NKScore)
+CS_Design <- model.matrix(~ 0 + CS_Group)
+colnames(CS_Design) <- levels(CS_Group)
+```
+
+# Filter and normalise data
+```{r}
+# The data is already filtered, but the voom looks a bit off so filter more:
+voom(TCGA_DGEList, CS_Design, plot = TRUE, normalize.method = "quantile")
+
+keep.expr <- filterByExpr(TCGA_DGEList, design = CS_Design) # removes an additional 180 genes
+DGEList_Filt <- TCGA_DGEList[keep.expr, ] # 13678 x 90 
+
+voom(DGEList_Filt, CS_Design, plot = TRUE, normalize.method = "quantile")
+
+DGEList_FiltNorm <- calcNormFactors(DGEList_Filt, method = "TMM")
+DGEList_FiltNormLog <- cpm(DGEList_Filt, log = T) # normalised
+
+voom(DGEList_FiltNorm, CS_Design, plot = TRUE, normalize.method = "quantile")
+```
+
+# QC Plots
+```{r}
+# library sizes
+ggplot(TCGA_DGEList$samples, aes_string(x = "patient", y = "lib.size", fill = "NK_Score")) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(values = c("darkred", "blue")) +
+  ggtitle("Library Sizes - TCGA-COAD Cohort") +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 90))
+
+# PCA
+library(ggfortify)
+ForPCA <- as.data.frame(t(DGEList_FiltNormLog))
+all(rownames(ForPCA) == NKTotal) #T
+ForPCA$NK_Score <- ""
+ForPCA$NK_Score[1:45] <- "NK_Low"
+ForPCA$NK_Score[46:90] <- "NK_High"
+ForPCA$NK_Score <- as.factor(ForPCA$NK_Score)
+
+PCA_COAD <- prcomp(ForPCA[ , -c(13679)])
+
+ForPCA <- cbind(Coad_Annot, ForPCA)
+ForPCA$Subtype_MSI_Status <- as.character(ForPCA$Subtype_MSI_Status)
+ForPCA$Subtype_MSI_Status[is.na(ForPCA$Subtype_MSI_Status)] <- "Not Reported"
+ForPCA$Subtype_MSI_Status <- as.factor(ForPCA$Subtype_MSI_Status)
+
+for(i in colnames(Coad_Annot)[c(3,9,13,10,18,28)]){
+print(autoplot(PCA_COAD, data = ForPCA, shape = "NK_Score", colour = as.character(i), size = 3) +
+        scale_shape_manual(values = c(16,17)) +
+        scale_color_brewer(palette = "Dark2") +
+        ggtitle("PCA Plots - TCGA-COAD") +
+        labs(caption = "@Sep - interestingly, it looks like the NK high group separates based \n on whether the samples are MSI-H or MSI-L/MSS") +
+        theme_light())
+  }
+
+# RLE
+RLE_COAD <- sweep(DGEList_FiltNormLog, 1, rowMedians(DGEList_FiltNormLog))
+RLE_gatheredCOAD <- 
+  tidyr::gather(as.data.frame(RLE_COAD), patient_array, log2_expression_deviation)
+
+RLE_gatheredCOAD$NK_Score <- ""
+RLE_gatheredCOAD$NK_Score <- ifelse(RLE_gatheredCOAD$patient_array %in% NKTotal[1:45], "NK_Low", "NK_High")
+
+RLE_gatheredCOAD <- RLE_gatheredCOAD[order(RLE_gatheredCOAD$NK_Score), ]
+RLE_gatheredCOAD$patient_array <- factor(RLE_gatheredCOAD$patient_array, levels = unique(RLE_gatheredCOAD$patient_array))
+
+ggplot(RLE_gatheredCOAD, aes(patient_array, log2_expression_deviation, fill = NK_Score)) +
+  geom_boxplot(outlier.colour = NA) +
+    ggtitle("RLE Plot - TCGA-COAD") +
+  scale_fill_manual(values = c("darkred", "blue")) +
+  ylim(-5,5) +
+  labs(caption = "@Sep - do you think I need to remove those NK Highsamples that have large variance? \n Should I be concerned that these are mostly in the NK High group?") +
+  theme(axis.text.x = element_blank())
+
+Coad_Annot[1:3, c(3,9,13,10,18,26:28)]
+```
+
+
+```{r}
+# Voom transform the data via normalisation
+VoomData <- voom(DGEList_FiltNorm, CS_Design, plot = TRUE, normalize.method = "quantile")
+col.treat <- c("red","blue","green","darkorange","purple","yellow")[factor(CS_NKScore)]
+
+# voomWithQualityWeights(DGEList_FiltNorm, CS_Design, plot = TRUE, normalize.method = "quantile")
+col.treat <- c("red","blue","green","darkorange","purple","yellow")[factor(CS_NKScore)]
+
+plotMDS(VoomData,col=col.treat, top = 100, pch = 19, main = "Post-Voom MDS: Top 100 Most Variable Genes")
+legend('topright',col=c("red","blue","green","darkorange","purple","yellow"),legend = colnames(CS_Design),pch = 20,cex = 0.5)
+
+plotMDS(VoomData,col=col.treat, top = 500, pch = 19, main = "Post-Voom MDS: Top 500 Most Variable Genes")
+legend('topright',col=c("red","blue","green","darkorange","purple","yellow"),legend = colnames(CS_Design),pch = 20,cex = 0.5)
+
+plotMDS(VoomData,col=col.treat, top = 1000, pch = 19, main = "Post-Voom MDS: Top 1000 Most Variable Genes")
+legend('topright',col=c("red","blue","green","darkorange","purple","yellow"),legend = colnames(CS_Design),pch = 20,cex = 0.5)
+```
+
+```{r}
+#Fit the data to a linear model
+CS_Fit <- lmFit(VoomData) # VoomData is an EList
+#Make a contrast matrix & fit the data | input comparison you want to make
+CS_cont.matrix <- makeContrasts(HighvsLow = NK_High-NK_Low, levels = CS_Design)
+CS_fit.cont <- contrasts.fit(CS_Fit, CS_cont.matrix) 
+
+CS_fit.cont <- eBayes(CS_fit.cont)
+plotSA(CS_fit.cont)
+CS_summa.fit <- decideTests(CS_fit.cont)
+
+summary(decideTests(CS_fit.cont))  # 3287 Down DEGs and 2867 Up DEGs
+
+#Create objects for subsequent CSV file export, and sort the files by p-value
+HighvsLow <- topTable(CS_fit.cont, coef = "HighvsLow", sort.by = "p", adjust.method = "fdr", number = "inf")
+#write.csv(HighvsLow, "201020_TCGA_DEGs_NK_High_vs_Low.csv", row.names=TRUE)
+```
+# GOana / KEGGa / Fry geneset testing (Barcode plot for Figure 6C)
+```{r fig.width=8}
+go.fisher <- goana(CS_fit.cont, geneid = CS_fit.cont$genes$entrezgene, species="Hs")
+TopGO_100 <- topGO(go.fisher, ont="BP", sort = "up", number = 100)
+topGO(go.fisher, ont="BP", sort = "down")
+
+keg <- kegga(CS_fit.cont, geneid = CS_fit.cont$genes$entrezgene, species="Hs")
+topKEGG(keg, sort = "up")
+topKEGG(keg, sort = "down")
+
+# search for NK related GO terms
+library(GO.db)
+NK_GO <- c("GO:0002228", "GO:0042267", "GO:0002370", "GO:0002423")
+
+# NK cell mediated immunity
+# NK cell mediated toxicity
+# NK cell cytokine production
+# NK cell mediated immune response to tumor cell
+
+library(org.Hs.eg.db)
+Rkeys(org.Hs.egGO2ALLEGS, x = ) <- NK_GO
+NK_GOgenes <- as.list(org.Hs.egGO2ALLEGS)
+
+fry(VoomData$E, index = NK_GOgenes, CS_Design)
+
+#pdf("TCGA_FryTesting_NKTerms.pdf", width = 6, height = 4)
+index <- CS_Fit$genes$entrezgene %in% NK_GOgenes[[1]]
+barcodeplot(CS_fit.cont$t[,1], index, main = paste0(NK_GO[1], ": NK cell mediated immunity"), labels = c("NK Score Low", "NK Score High"))
+index <- CS_Fit$genes$entrezgene %in% NK_GOgenes[[2]]
+barcodeplot(CS_fit.cont$t[,1], index, main = paste0(NK_GO[2], ": NK cell mediated toxicity"), labels = c("NK Score Low", "NK Score High"))
+index <- CS_Fit$genes$entrezgene %in% NK_GOgenes[[3]]
+barcodeplot(CS_fit.cont$t[,1], index, main = paste0(NK_GO[3], ": NK cell cytokine production"), labels = c("NK Score Low", "NK Score High"))
+
+index <- CS_Fit$genes$entrezgene %in% NK_GOgenes[[4]]
+barcodeplot(CS_fit.cont$t[,1], index, main = paste0(NK_GO[4], ": NK cell mediated immune response to tumor cell"), labels = c("NK Score Low", "NK Score High"))
+dev.off()
+```
+
+# Generate bubble plot of top GO terms in TCGA data (Figure 6D)
+```{r fig.width = 8}
+library(rrvgo)
+#go_analysis <- read.delim(system.file("extdata/example.txt", package="rrvgo"))
+TopGO_100$GO_ID <- rownames(TopGO_100)
+simMatrix <- calculateSimMatrix(TopGO_100$GO_ID,
+                                orgdb="org.Hs.eg.db",
+                                ont="BP",
+                                method="Rel")
+
+scores <- setNames(-log10(TopGO_100$P.Up), TopGO_100$GO_ID)
+reducedTerms <- reduceSimMatrix(simMatrix,
+                                scores,
+                                threshold=0.7,
+                                orgdb="org.Hs.eg.db")
+
+# Plot GO terms as scattered points. Distances between points represent the similarity between terms, and axes are the first 2 components of applying a PCoA to the (di)similarity matrix. Size of the point represents the provided scores or, in its absence, the number of genes the GO term contains.
+
+pdf("GO_TermBubblePlot_TCGA.pdf", width = 12, height = 8)
+scatterPlot(simMatrix[1:50, 1:50], reducedTerms, size = "score") +
+  ggtitle("Top 50 GO_Terms - GOana analysis - TCGA data") +
+  guides(size = guide_legend("Number of Genes in GO Term")) +
+  theme_light() +
+  labs(y = "PCA Dimension 1", x = "PCA Dimension 2")
+dev.off()
+```
+
+# LogFC Plot against Marisa Data (Figure 6A)
+```{r}
+TCGA_LogFCs <-  read.csv("./data/TCGA_DEGs_NK_High_vs_Low.csv", stringsAsFactors = F)
+Marisa_LogFCs <- read.csv("./Marisa_CRCs_DEGs_NK_High_vs_Low.csv", stringsAsFactors = F)
+colnames(Marisa_LogFCs)[1] <- "entrezgene"
+
+library(dplyr)
+# Joined <- full_join(TCGA_LogFCs[ , c(3, 7:8,12)], Marisa_LogFCs[ ,c(1:2,6)], by = "entrezgene") # 14862
+# Joined <- Joined[complete.cases(Joined$entrezgene), ] # 113 NAs
+# Joined <- Joined[complete.cases(Joined$external_gene_name), ] # 1184 genes without symbols?
+
+Joined <- merge(TCGA_LogFCs, Marisa_LogFCs, by = "entrezgene") # 11181
+
+Joined$SigGenes <- ifelse(Joined$adj.P.Val.x > 0.05 & Joined$adj.P.Val.y > 0.05,"NonSigBothData", "Sig")
+Joined <- Joined[Joined$SigGenes == "Sig", ] # remove the genes that are non-sig in both data
+
+#All Sig genes (P1)
+Joined$SigGenes <- ifelse(Joined$logFC.x > 1 & Joined$adj.P.Val.x < 0.05 &
+                            Joined$logFC.y > 1 & Joined$adj.P.Val.y < 0.05 |
+                            Joined$logFC.x < -1 & Joined$adj.P.Val.x < 0.05 &
+                            Joined$logFC.y < -1 & Joined$adj.P.Val.y < 0.05, "Sig", "NotSig")
+#write.csv(Joined[Joined$SigGenes == "Sig", ], "220713_OverlappingDEGs_TCGAMarisa.csv")
+
+library(ggpubr)
+P1 <- ggplot(Joined, aes(logFC.x, logFC.y))+
+  geom_point(aes(color = SigGenes, alpha = SigGenes), stroke = 0, size = 2) +
+  scale_alpha_manual(values = c(0.2,0.8))+
+  scale_color_manual(values = c("black", "darkred"), name = "Adj p.val < 0.05") +
+  xlim(-4,4.2) +
+  ylim(-4,4.2) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_smooth(method = lm, se = FALSE, colour = "darkred", size = 0.5) +
+  stat_cor(method = "spearman") +
+  xlab("logFC (TCGA)") +
+  ylab("logFC (Marisa)") +
+  ggtitle("Sig Genes: Both Only") + #P1
+  theme_light() +
+  labs(caption = "Sig genes = LogFC<1 & adj.p.val <0.01 | LogFC<1 & adj.p.val <0.01")
+
+#Joined$Label <- ifelse(Joined$SigGenes == "Sig", Joined$external_gene_name, "")
+# specify the top/bottom ~10 genes to prevent label overcrowding (decided based on average LogFC between x and y)
+BottomLabs <- c("OLFM4","FABP1","LRRC19","DACH1","CXCL14","MEP1A","MUC12","PLCB4","SLC26A3", "KRT20")
+# next 5: "PCK1","GUCY2C","A1CF","SOSTDC1",'LEFTY1')
+TopLabs <- c("RARRES3","CXCL10","GZMH","CCL5","CXCL9","IDO1","NKG7","GZMA","GZMB","GNLY")
+# next 5:  "GBP5", "CLIC3","CXCL13","PRF1","CD8A")
+
+Joined$Label <- ifelse(Joined$external_gene_name %in% BottomLabs, Joined$external_gene_name, ifelse(Joined$external_gene_name %in% TopLabs, Joined$external_gene_name, ""))
+
+P1_Labs <- ggplot(Joined, aes(logFC.x, logFC.y))+
+  geom_point(aes(color = SigGenes, alpha = SigGenes), stroke = 0, size = 2) +
+  scale_alpha_manual(values = c(0.2,0.8))+
+  scale_color_manual(values = c("black", "darkred"), name = "Adj p.val < 0.05") +
+  xlim(-4,4.2) +
+  ylim(-4,4.2) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  geom_smooth(method = lm, se = FALSE, colour = "darkred", size = 0.5) +
+  stat_cor(method = "spearman") +
+  xlab("logFC (TCGA)") +
+  ylab("logFC (MSKCC)") +
+  ggtitle("Sig Genes: Both Only") + #P1
+  theme_light() +
+  geom_label_repel(label = Joined$Label, size = 2, label.padding = 0.1) +
+  theme(aspect.ratio = 1)
+
+
+# TCGA Only (P2)
+Joined$SigGenes <- ifelse(Joined$logFC.x > 1 & Joined$adj.P.Val.x < 0.05 | 
+                            Joined$logFC.x < -1 & Joined$adj.P.Val.x < 0.05, "Sig", "NotSig")
+
+P2 <- ggplot(Joined, aes(logFC.x, logFC.y))+
+  geom_point(aes(color = SigGenes, alpha = SigGenes), stroke = 0, size = 2) +
+  scale_alpha_manual(values = c(0.2,0.8))+
+  scale_color_manual(values = c("black", "darkred"), name = "Adj p.val < 0.05") +
+  xlim(-4,4.2) +
+  ylim(-4,4.2) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_smooth(method = lm, se = FALSE, colour = "darkred", size = 0.5) +
+  stat_cor(method = "spearman") +
+  xlab("logFC (TCGA)") +
+  ylab("logFC (MSKCC)") +
+  ggtitle("Sig Genes: TCGA Only") + #P1
+  theme_light() 
+
+# Marisa Only (P3)
+Joined$SigGenes <- ifelse(Joined$logFC.y > 1 & Joined$adj.P.Val.y < 0.05 |
+                            Joined$logFC.y < -1 & Joined$adj.P.Val.y < 0.05, "Sig", "NotSig")
+
+P3 <- ggplot(Joined, aes(logFC.x, logFC.y))+
+  geom_point(aes(color = SigGenes, alpha = SigGenes), stroke = 0, size = 2) +
+  scale_alpha_manual(values = c(0.2,0.8))+
+  scale_color_manual(values = c("black", "darkred"), name = "Adj p.val < 0.05") +
+  xlim(-4,4.2) +
+  ylim(-4,4.2) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_smooth(method = lm, se = FALSE, colour = "darkred", size = 0.5) +
+  stat_cor(method = "spearman") +
+  xlab("logFC (TCGA)") +
+  ylab("logFC (MSKCC)") +
+  ggtitle("Sig Genes: MSKCC Only") + #P1
+  theme_light() 
+
+#pdf("LogFCPlots_DEGs_TCGAvsMarisa.pdf", width = 6, height = 6, useDingbats = F)
+P1
+P1_Labs
+P2
+P3
+dev.off()
+
+SigGenes <- Joined[Joined$SigGenes == "Sig", ]
+#write.csv(SigGenes, "TCGA_Marisa_SigDEGs.csv")
+
+```
+
+# Venn Diagrams: Overlap b/w TCGA and Marisa
+```{r}
+library(VennDiagram)
+
+# TCGA_Up <- Joined[Joined$logFC.x > 1 & Joined$adj.P.Val.x < 0.05, ]
+# TCGA_Up <- TCGA_Up[! is.na(TCGA_Up$entrezgene), ]
+# TCGA_Up <- TCGA_Up$external_gene_name
+#
+#
+# TCGA_Down <- Joined[Joined$logFC.x < -1 & Joined$adj.P.Val.x < 0.05, "external_gene_name"]
+# Marisa_Up <- Joined[Joined$logFC.y > 1 & Joined$adj.P.Val.y < 0.05, "external_gene_name"]
+# Marisa_Down <- Joined[Joined$logFC.y < -1 & Joined$adj.P.Val.y < 0.05, "external_gene_name"]
+
+TCGA_Up <- Joined[Joined$logFC.x > 1 & Joined$adj.P.Val.x < 0.05, "external_gene_name"] # 520
+TCGA_Down <- Joined[Joined$logFC.x < -1 & Joined$adj.P.Val.x < 0.05, "external_gene_name"] # 251
+
+Marisa_Up <- Joined[Joined$logFC.y > 1 & Joined$adj.P.Val.y < 0.05, "external_gene_name"] # 251
+Marisa_Down <- Joined[Joined$logFC.y < -1 & Joined$adj.P.Val.x < 0.05, "external_gene_name"] # 251
+
+library(ggVennDiagram)
+Up <- list(TCGA = TCGA_Up, Marisa = Marisa_Up)
+ggVennDiagram(Up)
+
+Down <- list(TCGA = TCGA_Down, Marisa = Marisa_Down)
+ggVennDiagram(Down)
+
+
+library(VennDiagram)
+library(RColorBrewer)
+myCol <- brewer.pal(3, "Pastel2")
+venn.diagram(x = list(TCGA_Up, Marisa_Up),
+             category.names = c("TCGA Up", "Marisa Up"),
+             filename = "UpDEGs_VennDiagram.png",
+             output = F,
+             lwd = c("4","4"),
+             cat.cex = 1.5,
+             cat.dist = 0.1,
+             margin = 0.1,
+             col=c("#440154ff", '#21908dff'), #, 'forestgreen'),
+             fill = c(alpha("#440154ff",0.3), alpha('#21908dff',0.3)), #, alpha('forestgreen',0.3)),
+             cat.col = c("#440154ff", '#21908dff'), # 'forestgreen'),
+             cat.default.pos = "outer"
+             )
+
+venn.diagram(x = list(TCGA_Down, Marisa_Down),
+             category.names = c("TCGA Down", "Marisa Down"),
+             filename = "DownDEGs_VennDiagram.png",
+             output = F,
+             lwd = c("4","4"),
+             cat.cex = 1.5,
+             cat.dist = 0.1,
+             margin = 0.1,
+             col=c("#440154ff", '#21908dff'), #, 'forestgreen'),
+             fill = c(alpha("#440154ff",0.3), alpha('#21908dff',0.3)), #, alpha('forestgreen',0.3)),
+             cat.col = c("#440154ff", '#21908dff'), # 'forestgreen'),
+             cat.default.pos = "outer"
+             )
+```
+

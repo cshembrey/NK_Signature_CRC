@@ -1,0 +1,612 @@
+---
+title: "First-pass refinement of putative NK signature genes"
+author: "C Shembrey"
+date: "Created 20/4/2020, Cleaned 21/06/2022"
+output: html_document
+---
+
+---
+In this document, we refine our initial collated NK signature (295 genes taken from the literature, previously published signatures, and our in-house DE analysis).
+
+NOTE: filtration of the gene signature derived at the end of this document is continued (further refinements) in the "Tumour and Stromal filt of post-scRNAseq 82 gene sig.Rmd" file
+
+# Setup
+```{r results = 'hide', message = FALSE, warning = FALSE}
+library(limma)
+library(scales)
+library(ggplot2)
+library(ggrepel)
+library(plotly)
+library(gridExtra)
+library(grid)
+library(ggpubr) # for statistics
+
+source("../Files/biplot_ggplot.R")
+```
+
+# NK Signature Filtration using Biplot
+
+## Import NK Signatures to Test:
+See "Collating NK Signature Sources - version control.Rmd" for details re: how this geneset was compiled
+```{r}
+nk <- read.csv("../Files/Initial_NK_Sig_295_Genes.csv") 
+rownames(nk) <- nk$GeneID
+```
+
+# Generate table of NK Signature sources:
+```{r}
+CiberAct <- read.csv("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/data/NK_Signatures/Compiled/Cibersort_NK-Active.csv")
+CiberAct <- nk$Symbol %in% CiberAct$Genes
+SumTable <-  cbind(nk, CiberAct)
+
+CiberRest <- read.csv("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/data/NK_Signatures/Compiled/Cibersort_NK-Resting.csv")
+Cibersort_Resting <- nk$Symbol %in% CiberRest$Genes
+SumTable <-  cbind(SumTable, Cibersort_Resting)
+
+CursonsSups <- read.csv("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/data/NK_Signatures/Compiled/CursonsSups_112Genes.csv")
+CursonsSups <- nk$Symbol %in% CursonsSups$Cursons.Supplementary.Data
+SumTable <-  cbind(SumTable, CursonsSups)
+
+# JerbyMarker <- read.csv("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/data/NK_Signatures/Compiled/Jerby_NK.Marker.csv")
+# JerbyMarker <- nk$Symbol %in% JerbyMarker$Symbol
+# SumTable <-  cbind(SumTable, JerbyMarker)
+# 
+# Jerby_scDEG <- read.csv("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/data/NK_Signatures/Compiled/Jerby_scDEGs.csv")
+# Jerby_scDEG <- nk$Symbol %in% Jerby_scDEG$Symbol
+# SumTable <-  cbind(SumTable, Jerby_scDEG)
+
+MergedDEGs_Bulk <- readRDS("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/data/KeyData/blood_nk/NK_genelist_2bld.RDS")
+NK_upSet <- MergedDEGs_Bulk$NK_upSet
+DEGs_2BldBulk <- nk$Symbol %in% NK_upSet
+SumTable <-  cbind(SumTable, DEGs_2BldBulk)
+
+DEGs_NKvsPanT <- MergedDEGs_Bulk$NK_panT_up
+DEGs_NKvsPanT <- nk$Symbol %in% DEGs_NKvsPanT
+SumTable <-  cbind(SumTable, DEGs_NKvsPanT)
+
+RecepAct <- read.csv("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/data/NK_Signatures/Compiled/NK_ReceptorActivating.csv")
+RecepInhib <- read.csv("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/data/NK_Signatures/Compiled/NK_ReceptorInhibitory.csv")
+Receptors <- rbind(RecepAct, RecepInhib) # remove dual function receptors
+Receptors <- nk$Symbol %in% Receptors$Genes
+SumTable <-  cbind(SumTable, Receptors)
+
+WangGenes <- read.csv("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/data/GeneSignatures/Immune_stroma/Stroma_Immune_markers_Wang_2017_Gastroenterology.csv", stringsAsFactors = F)
+WangGenes <- WangGenes[WangGenes$Marker.type == "NK cell", ]
+WangGenes <- WangGenes$Gene.Name
+WangGenes <- nk$Symbol %in% WangGenes
+SumTable <-  cbind(SumTable, WangGenes)
+
+#write.csv(outPath, "200501_NKSig_303GeneProvenance.csv")
+```
+
+# How many genes have multiple sources?
+```{r}
+colnames(SumTable)
+TstHtmp <- SumTable[ , c(3,6:12)]
+rownames(TstHtmp) <- TstHtmp$Symbol
+TstHtmp <- TstHtmp[ , -c(1)]
+
+TstHtmp$SumSource <- rowSums(TstHtmp)
+table(TstHtmp$SumSource)
+
+which(TstHtmp$SumSource == 7) # zero genes in all 7 sources
+which(TstHtmp$SumSource == 6) # KLRD1, KIR3DL2
+which(TstHtmp$SumSource == 5) # CD244, KIR2DS4, KLRC3, KLRF1, KLRK1, KIR2DL1, KLRB1, IL12RB
+
+#pdf("Histogram_GeneSigSumOfSources.pdf")
+ggplot(TstHtmp, aes(SumSource)) +
+       geom_bar(width = 1, fill = "forestgreen", color = "black") +
+       geom_text(stat = "count", color = "forestgreen", aes(label = ..count..), vjust=-1) +
+  scale_x_continuous(name = "Sum of Sources", breaks = c(1,2,3,4,5,6,7)) +
+  scale_y_continuous(name = "Count (n of Genes)", breaks = c(0,50,100,150,200, 250)) +
+  ylim(c(0,200)) + 
+  labs(x = "Sum of Sources", y = "Count (n of Genes)") +
+  theme_light() +
+  theme(panel.grid.major = element_blank())
+dev.off()
+
+# add SumSource info to nk dataframe:
+all(nk$Symbol == rownames(TstHtmp)) # T
+nk$SumSource <- TstHtmp$SumSource
+```
+
+## Import and prepare the log-normalised data for the Linsley bulkRNAseq blood data:
+```{r}
+dataList <- readRDS("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/Cleaned_Code_For_Gitlab/Files/CancerBlood_dataList_CRC_logRPKM.RDS") 
+LinsBld <- dataList$bldCells_logRPKM
+
+# subset to NK sig
+Bld_NKSig <- LinsBld[rownames(LinsBld) %in% nk$GeneID, ] # 390 genes x 28 samples --> there are 5 missing genes (KIR2DS3, KIR2DL2, KIR2DL5B, TRBC1, MIR181A2HG)
+
+# split the annotation file into its constituent cell types:
+LinsAnnot <- dataList$bldCells_annot 
+LinsAnnot$celltype_s <- as.character(LinsAnnot$celltype_s)
+
+annotSplit <- split(LinsAnnot, LinsAnnot$celltype_s, drop = F) # all elements (data frames from individual cell types) are 4 samples x 5
+
+NKdata_Lins <- Bld_NKSig[, colnames(Bld_NKSig) %in% rownames(annotSplit$NK)]
+B.Cell <- Bld_NKSig[, colnames(Bld_NKSig) %in% rownames(annotSplit$`B-cells`)]
+CD4 <- Bld_NKSig[, colnames(Bld_NKSig) %in% rownames(annotSplit$CD4)]
+CD8 <- Bld_NKSig[, colnames(Bld_NKSig) %in% rownames(annotSplit$CD8)]
+Mono <- Bld_NKSig[, colnames(Bld_NKSig) %in% rownames(annotSplit$Monocytes)]
+Neut <- Bld_NKSig[, colnames(Bld_NKSig) %in% rownames(annotSplit$Neutrophils)]
+
+nonNKs <- Bld_NKSig[, ! colnames(Bld_NKSig) %in% rownames(annotSplit$NK)] # 279 genes x 24 samples (all but NKs)
+
+# generate list for plotting later
+CellTypeData_Linsley <- list(Bcell = B.Cell,
+                     CD4 = CD4,
+                     CD8 = CD8,
+                     Monocytes = Mono,
+                     Neutrophils = Neut)
+
+ctdNames_Lins <- c("B.Cell",
+                 "CD4",
+                 "CD8",
+                 "Mono",
+                 "Neut")
+
+# Update table to track subsetting
+Linsley <- nk$GeneID %in% rownames(Bld_NKSig)
+SumTable <- cbind(SumTable, Linsley)
+```
+
+## Generate biplots for the NK Sig using the Linsley data
+
+```{r fig.width= 10, fig.height = 10}
+# Subset NK sig (395 genes) so that only the 298 genes that appear in LinsBld are kept
+NK <- nk[rownames(nk) %in% rownames(Bld_NKSig), ]
+NK <- NK[rownames(Bld_NKSig), ]
+
+# generate annotations for biplot
+sourceAnnot <- NK$SumSource
+names(sourceAnnot) <- rownames(NK)
+
+geneAnnot <- NK$Symbol
+names(geneAnnot) <- rownames(Bld_NKSig)
+
+p <- list()
+#pdf("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/200501_Linsley_biplots_NK-0.5_Blood-0.5_Lax.pdf", width = 25, height = 8)
+pdf("Linsley_Biplots.pdf", width = 30, height = 12, useDingbats = F)
+for(i in ctdNames_Lins){
+  ctd <- get(i)
+  #print(
+  p[[i]] <- biplot(
+  data.expr = NKdata_Lins,
+  data.noexpr = ctd,
+  data.names = c("NK Cells_Linsley", i),
+  data.expr.th = 0.5,
+  data.noexpr.th = 0.5,
+  annot = sourceAnnot,
+  annot.name = "Sum of Sources",
+  #point.labels = geneAnnot,
+  text.size = 1.2) + 
+    geom_vline(xintercept = 0, col = "darkred", linetype = "dashed") +
+    #geom_vline(xintercept = -1, col = "darkred", linetype = "dashed") +
+   # geom_hline(yintercept = 3, col = "darkred", linetype = "dashed") +
+    geom_hline(yintercept = 2, col = "darkred", linetype = "dashed") +
+    theme(aspect.ratio = 0.4) # legend.position = "none"
+  #)
+}
+
+PlotTitle <- textGrob(paste0("Linsley Data: median expression of NK cell signature genes in NK cells vs other immune cell types \n "), gp=gpar(fontface="bold", fontsize=20))
+
+do.call(grid.arrange, c(p, list(ncol = 3, top = PlotTitle)))
+dev.off()
+
+# Bind this to the Xu data and add a single legend below (or at right)
+```
+
+## Filter genes based on biplot strict thresholds (dashed lines) & lax thresholds (solid lines)
+```{r}
+data.expr.th <- 0.5
+data.noexpr.th <- 0.5
+
+LinsStrict <- names(which(
+              apply(NKdata_Lins, 1, quantile, probs = data.expr.th) >= 3 &
+              apply(CD8, 1, quantile, probs = data.noexpr.th) <= -1 &
+              apply(CD4, 1, quantile, probs = data.noexpr.th) <= -1 &
+              apply(B.Cell, 1, quantile, probs = data.noexpr.th) <= -1 &
+              apply(Mono, 1, quantile, probs = data.noexpr.th) <= -1 &
+              apply(Neut, 1, quantile, probs = data.noexpr.th) <= -1
+              ))
+length(LinsStrict) # 8 genes (when we use NK expression threshold = 0.25 and blood cell type expression threshold = 0.75, there were 29 genes...)
+nkSymbols <- NK[LinsStrict, ]
+nkSymbols$Thresh <- "BiplotStrict"
+#write.csv(nkSymbols, "191126_NKSig_15Genes_BiplotMedians_StrictThreshold.csv")
+
+LinsLax <- names(which(
+              apply(NKdata_Lins, 1, quantile, probs = data.expr.th) >= 2 &
+              apply(CD8, 1, quantile, probs = data.noexpr.th) <= 0 &
+              apply(CD4, 1, quantile, probs = data.noexpr.th) <= 0 &
+              apply(B.Cell, 1, quantile, probs = data.noexpr.th) <= 0 &
+              apply(Mono, 1, quantile, probs = data.noexpr.th) <= 0 &
+              apply(Neut, 1, quantile, probs = data.noexpr.th) <= 0
+              ))
+
+length(LinsLax) # 36 genes (when we use NK expression threshold = 0.25 and blood cell type expression threshold = 0.75, there were 91 genes...)
+nkSymbols_lax <- NK[LinsLax, ]
+nkSymbols_lax$Thresh <- "BiplotLax"
+#write.csv(nkSymbols_lax, "191126_NKSig_36genes_BiplotMedians_LaxThreshold.csv")
+length(nkSymbols_lax$GeneID)
+
+overlap <- intersect(nkSymbols$GeneID, nkSymbols_lax$GeneID)
+lax_only <- nkSymbols_lax[! nkSymbols_lax$GeneID %in% overlap, ]
+lax_only$Thresh <- "BiplotLax" 
+ThreshData <- rbind(nkSymbols, lax_only) # 36 genes (8 with "strict" and 28 with "lax" annotations)
+
+#write.csv(ThreshData, "191126_NKSig__LinsBiplot_MedvsMedFiltered_StrictLaxThresholds.csv")
+#ThreshData <- read.csv("191126_NKSig__LinsBiplot_MedvsMedFiltered_StrictLaxThresholds.csv", stringsAsFactors = F)
+rownames(ThreshData) <- ThreshData$GeneID 
+
+ThreshData$SumSource <- as.factor(ThreshData$SumSource)
+sourceAnnot <- ThreshData$SumSource
+names(sourceAnnot) <- rownames(ThreshData)
+
+# plot the 36 x passing genes
+plot1 <- lapply(CellTypeData_Linsley, function(x) { x[rownames(ThreshData), , drop = F] })
+names(plot1) <- ctdNames_Lins
+
+#pdf("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/Filtered_LinsleyGeneBiplots.pdf", width = 25, height = 8)
+p <- list()
+for(i in ctdNames_Lins){
+  d <- plot1[i]
+  p[[i]] <- biplot(
+  data.expr = NKdata_Lins[rownames(ThreshData), ],
+  data.noexpr = d,
+  data.names = c("NK Cells_Lins", i),
+  data.expr.th = 0.5,
+  data.noexpr.th = 0.5,
+  annot = sourceAnnot,
+  annot.name = "Sum of Sources",
+  point.labels = geneAnnot,
+  text.size = 0.75) +
+    geom_vline(xintercept = 0, col = "darkred", linetype = "dashed") +
+    geom_hline(yintercept = 2, col = "darkred", linetype = "dashed") +
+    theme(aspect.ratio = 0.4, legend.position = "none")
+  }
+
+PlotTitle <- textGrob(paste0("Linsley Data: median expression of filtered NK cell signature genes in NK cells vs other immune cell types \n "), gp=gpar(fontface="bold", fontsize=20))
+
+do.call(grid.arrange, c(p, list(ncol = 3, top = PlotTitle)))
+dev.off()
+
+# add to table
+LinsleyPass <- nk$GeneID %in% ThreshData$GeneID
+SumTable <- cbind(SumTable, LinsleyPass)
+```
+
+## Validate the signature in another blood data; import and prepare the log-normalised data for the Xu bulkRNAseq blood data and repeat the biplot analysis:
+
+```{r fig.width=12}
+Xu <-  read.table("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/data/KeyData/blood_nk/XuBulk_logTPMFilt.txt", check.names = F) # 114 samples
+Xu_NKSig <- Xu[rownames(Xu) %in% nk$GeneID, ] # 288 genes --> we miss 27 genes
+
+# update table
+Xutable <- nk$GeneID %in% rownames(Xu)
+SumTable <- cbind(SumTable, Xutable)
+
+summary(Xutable)
+# annotation file 
+XuAnnot <- read.csv("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/data/KeyData/blood_nk/XuBulk_Annot.csv")
+rownames(XuAnnot) <- XuAnnot$Samples
+XuAnnot <- XuAnnot[ , -c(1:2)]
+
+# make sample names consistent across annot and expr files (the expr data names get corrected when it becomes as dataframe ie. it can't handle "VD2-" and converts it to "VD2..1":
+testvector <- as.character(rownames(XuAnnot))
+colnames(Xu_NKSig) <- testvector
+all(rownames(XuAnnot) == colnames(Xu_NKSig)) # TRUE
+
+# split to constituent cell types
+Xu_annotSplit <- split(XuAnnot, XuAnnot$CellType, drop = F)
+
+Xu_NK <- Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$NK)]
+Xu_B <- Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$B)]
+Xu_Baso <- Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$Basophils)]
+Xu_CD4 <- Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$CD4)]
+Xu_CD8 <-Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$CD8)]
+Xu_MAIT <-Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$MAIT)]
+Xu_mDC <-Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$mDC)]
+Xu_Mono <- Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$Monocytes)]
+Xu_Neut <- Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$Neutrophils)]
+Xu_pDC <- Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$pDC)]
+Xu_Plas <- Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$Plasmablasts)]
+Xu_Prog <-Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$Progenitor)]
+Xu_Tfh <-Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$TFH)]
+Xu_Th1 <-Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$Th1)]
+Xu_Th1_17 <-Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$`Th1/Th17`)]
+Xu_Th17 <- Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$Th17)]
+Xu_Th2 <- Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$Th2)]
+Xu_Treg <-Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$Treg)]
+Xu_gamDelneg <-Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$`VD2-`)]
+Xu_gamDelpos <-Xu_NKSig[, colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$`VD2+`)]
+
+nonNK_Xu <- Xu_NKSig[, ! colnames(Xu_NKSig) %in% rownames(Xu_annotSplit$NK)]
+
+# merge the plasmacytoid and myeloid DC subsets
+Xu_DC = cbind(Xu_pDC, Xu_mDC)
+# merge T-cell subsets to crate "pan-T" category
+Xu_panT = cbind(Xu_CD4, Xu_CD8, Xu_MAIT, Xu_Tfh, Xu_Th1, Xu_Th17, Xu_Th1_17, Xu_Th2, Xu_Treg, Xu_gamDelneg, Xu_gamDelpos)
+
+# exclude plasma cells and progenitor cells
+CellTypeData_Xu <- list(Xu_B = Xu_B,
+                        Xu_Baso = Xu_Baso,
+                        Xu_DC = Xu_DC,
+                        Xu_Mono = Xu_Mono,
+                        Xu_Neut = Xu_Neut,
+                        Xu_panT = Xu_panT,
+                        Xu_CD4 = Xu_CD4,
+                        Xu_CD8 = Xu_CD8,
+                        Xu_MAIT = Xu_MAIT,
+                        Xu_Tfh = Xu_Tfh,
+                        Xu_Th1 = Xu_Th1,
+                        Xu_Th1_17 = Xu_Th1_17,
+                        Xu_Th17 = Xu_Th17,
+                        Xu_Th2 = Xu_Th2,
+                        Xu_Treg = Xu_Treg,
+                        Xu_gamDelneg = Xu_gamDelneg,
+                        Xu_gamDelpos = Xu_gamDelpos)
+
+ctdNames_Xu <- c("Xu_B",
+                  "Xu_Baso",
+                  "Xu_DC",
+                  "Xu_Mono",
+                  "Xu_Neut",
+                  "Xu_panT",
+                  "Xu_CD4",
+                  "Xu_CD8",
+                  "Xu_MAIT",
+                  "Xu_Tfh",
+                  "Xu_Th1",
+                  "Xu_Th1_17",
+                  "Xu_Th17",
+                  "Xu_Th2",
+                  "Xu_Treg",
+                  "Xu_gamDelneg",
+                  "Xu_gamDelpos")
+
+# generate annotations for biplot
+sourceAnnot <- NK$SumSource
+names(sourceAnnot) <- rownames(NK)
+
+geneAnnot <- NK$Symbol
+names(geneAnnot) <- rownames(NK)
+
+#pdf("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/200501_XuBiplots.pdf", width = 25, height = 24)
+pdf("Xu_Biplots.pdf", width =30, height = 24)
+
+p <- list()
+for(i in ctdNames_Xu){
+  ctd_Xu <- get(i)
+  p[[i]] <- biplot(
+  data.expr = Xu_NK,
+  data.noexpr = ctd_Xu,
+  data.names = c("NK Cells_Xu", (i)),
+  data.expr.th = 0.5,
+  data.noexpr.th = 0.5,
+  annot = sourceAnnot,
+  annot.name = "Gene source",
+  #point.labels = geneAnnot,
+  text.size = 1.2
+  ) +
+  #geom_vline(xintercept = 1, col = "red", linetype = "dashed") +
+  #geom_hline(yintercept = 4, col = "red", linetype = "dashed") +
+  geom_vline(xintercept = 2, col = "darkred", linetype = "dashed") +
+  geom_hline(yintercept = 2, col = "darkred", linetype = "dashed") +
+  theme(aspect.ratio = 0.4) # legend.position = "none"
+}
+
+PlotTitle <- textGrob(paste0("Xu Data: median expression of NK cell signature genes in NK cells vs other immune cell types \n "), gp=gpar(fontface="bold", fontsize=20))
+
+do.call(grid.arrange, c(p, list(ncol = 3, top = PlotTitle)))
+dev.off()
+```
+
+## Plot the 23 x passing genes
+
+NB: There are 23 intersecting genes, when the gammadelta subsets are split (ie. when gamDelneg and gamDelpos are not combined). There are 29 genes when the 2 x gamDel subtypes are combined
+```{r}
+allXu_intersect <-  sapply(ctdNames_Xu, function(x) {
+                    ctd_Xu <- get(x)
+                    names(which(
+                    apply(Xu_NK, 1, quantile, probs = data.expr.th) >= 2 & 
+                    apply(ctd_Xu, 1, quantile, probs = data.noexpr.th) <= 2))})
+
+allXu_intersect <- Reduce(intersect, allXu_intersect)                 
+length(allXu_intersect) # 23 genes
+
+# again, change to discrete colour scale here - change biplot viridis script value to 0.3:
+sourceAnnot <- as.factor(sourceAnnot)
+levels(sourceAnnot)
+
+plot2 <- lapply(CellTypeData_Xu, function(x) { x[allXu_intersect, , drop = F]} )
+names(plot2) <- ctdNames_Xu
+
+#pdf("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/200501_Filtered_XuBiplots.pdf", width = 25, height = 24)
+
+p <- list()
+for(i in ctdNames_Xu){
+  d <- plot2[i]
+  p[[i]] <- biplot(
+  data.expr = Xu_NK[allXu_intersect, ],
+  data.noexpr = d,
+  data.names = c("NK Cells_Xu", i),
+  data.expr.th = 0.5,
+  data.noexpr.th = 0.5,
+  annot = sourceAnnot,
+  annot.name = "Gene source",
+  point.labels = geneAnnot,
+  text.size = 0.75
+  ) +
+  geom_vline(xintercept = 2, col = "darkred", linetype = "dashed") +
+  geom_hline(yintercept = 2, col = "darkred", linetype = "dashed") +
+  theme(aspect.ratio = 0.4, legend.position = "none")
+  }
+
+PlotTitle <- textGrob(paste0("Xu Data: median expression of filtered NK cell signature genes in NK cells vs other immune cell types \n "), gp=gpar(fontface="bold", fontsize=20))
+
+#pdf("TestDingbats.pdf", useDingbats = F, width = 20, height = 15)
+do.call(grid.arrange, c(p, list(ncol = 3, top = PlotTitle)))
+dev.off()
+
+# update table
+XuPass <- nk$GeneID %in% allXu_intersect
+SumTable <-cbind(SumTable, XuPass)
+#write.csv(SumTable, "210123_GeneProvenanceTable_FromRmd1.csv")
+# 23/1/21: subset the SumTable to only the NKSigGenes
+```
+
+## Plot the genes coming from NK_panT_up only in both data sets. Check that at least some of these genes are conserved when we filter via the biplot methods above, as we need some genes to help differentiate NK cells from T cells.
+```{r}
+# Xu Data
+getIDs <- as.character(NK$GeneID[NK$Source == "NK_panT_up"])  
+plot3 <- lapply(CellTypeData_Xu, function(x) { x[getIDs, , drop = F]} )
+names(plot3) <- ctdNames_Xu
+
+#pdf("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/200501_Biplots_NKvsPanTGenes_XuData.pdf", width = 25, height = 24)
+
+p <- list()
+for(i in ctdNames_Xu){
+  d <- plot3[i]
+  p[[i]] <- biplot(
+  data.expr = Xu_NK[getIDs, ],
+  data.noexpr = d,
+  data.names = c("NK Cells_Xu", i),
+  data.expr.th = 0.5,
+  data.noexpr.th = 0.5,
+  annot = sourceAnnot,
+  annot.name = "Gene source",
+  point.labels = geneAnnot,
+  text.size = 0.75
+  ) +
+  geom_vline(xintercept = 2, col = "darkred", linetype = "dashed") +
+  geom_hline(yintercept = 2, col = "darkred", linetype = "dashed") +
+  theme(aspect.ratio = 0.4, legend.position = "none")
+}
+
+PlotTitle <- textGrob(paste0("NK vs T cell subsets: median expression of NK_panT_up signature genes only in the Xu data \n "), gp=gpar(fontface="bold", fontsize=20))
+
+do.call(grid.arrange, c(p, list(ncol = 3, top = PlotTitle)))
+dev.off()
+
+sum(getIDs %in% allXu_intersect) # there are 5 genes from the NK_panT_up set in the filtered Xu sig # "1305" (COL13A1)   "494470" (RNF165) "9079" (LDB2)  "79698" (ZMAT4) "158038" (LINGO2)
+
+# Linsley Data
+#pdf("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/200501_Biplots_NKvsPanTGenes_LinsleyData.pdf", width = 25, height = 8, useDingbats = F)
+
+plot4 <- lapply(CellTypeData_Linsley, function(x) { x[getIDs, , drop = F]} )
+names(plot4) <- ctdNames_Lins
+
+p <- list()
+for(i in ctdNames_Lins){
+  d <- plot4[i]
+  p[[i]] <- biplot(
+  data.expr = NKdata_Lins[getIDs, ],
+  data.noexpr = d,
+  data.names = c("NK Cells_Lins", i),
+  data.expr.th = 0.5,
+  data.noexpr.th = 0.5,
+  annot = sourceAnnot,
+  annot.name = "Gene source",
+  point.labels = geneAnnot,
+  text.size = 0.75
+  ) +
+  geom_vline(xintercept = 2, col = "darkred", linetype = "dashed") +
+  geom_hline(yintercept = 2, col = "darkred", linetype = "dashed") +
+     theme(aspect.ratio = 0.4, legend.position = "none")
+}
+
+PlotTitle <- textGrob(paste0("NK vs T cell subsets: median expression of NK_panT_up signature genes only in the Linsley data \n "), gp=gpar(fontface="bold", fontsize=20))
+
+do.call(grid.arrange, c(p, list(ncol = 3, top = PlotTitle)))
+dev.off()
+
+sum(getIDs %in% ThreshData$GeneID) # there are 3 genes from the NK_panT_up set in the filtered Lins sig: "494470" (RNF165) "9079" (LDB2) "284194 (LGALS9B)"
+```
+
+## Take the union of the candidate genes from the Linsley and Xu biplot analyses:
+
+```{r}
+allXu_intersect # Xu data - 23 genes (single 2 x 2 threshold)
+ThreshData$GeneID # Linsley data - 36 genes (8 from strict thresholds, 28 from lax thresholds)
+
+Cand_NKSig <- union(ThreshData$GeneID, allXu_intersect) # 49 genes
+length(intersect(ThreshData$GeneID, allXu_intersect)) # only 10 genes common to both
+
+# add Cand_NKsig to summary table
+Cand_NKSig_table <- nk$GeneID %in% Cand_NKSig
+SumTable <-  cbind(SumTable, Cand_NKSig_table)
+
+# visualise the 49 candidate genes on both data (change viridis value back to 0.65:
+LinsCand <- lapply(CellTypeData_Linsley, function(x) { as.data.frame(x)[Cand_NKSig, , drop = F]})
+names(LinsCand) <- ctdNames_Lins
+
+#pdf("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/200501_Biplots_Candidate49Genes_PostLinsleyFiltration.pdf", width = 25, height = 8)
+
+p <- list()
+for(i in ctdNames_Lins){
+  d <- LinsCand[i]
+  p[[i]] <- biplot(
+  data.expr = as.data.frame(NKdata_Lins)[Cand_NKSig, ],
+  data.noexpr = d,
+  data.names = c("NK Cells_Lins", i),
+  data.expr.th = 0.5,
+  data.noexpr.th = 0.5,
+  annot = sourceAnnot,
+  annot.name = "Gene source",
+  point.labels = geneAnnot,
+  text.size = 0.75
+  ) + 
+  geom_vline(xintercept = 0, col = "darkred", linetype = "dashed") +
+  geom_hline(yintercept = 2, col = "darkred", linetype = "dashed") +
+  theme(aspect.ratio = 0.4, legend.position = "none")
+}
+
+PlotTitle <- textGrob(paste0("Linsley Data: NK vs immune cell subsets: median expression of Cand_NKsig (49 genes) \n "), gp=gpar(fontface="bold", fontsize=20))
+
+do.call(grid.arrange, c(p, list(ncol = 3, top = PlotTitle)))
+dev.off()
+# it looks great for all cell types!
+```
+
+```{r}
+# repeat for Xu data
+XuCand <- lapply(CellTypeData_Xu, function(x) { x[Cand_NKSig, , drop = F]} )
+names(XuCand) <- ctdNames_Xu
+
+#pdf("/Users/shembreycarolyn/Documents/PhD Archive/PhD Project/Computational Biology/200501_Biplots_Candidate49Genes_PostXuFiltration_NoLabels.pdf", width = 25, height = 24)
+
+p <- list()
+for(i in ctdNames_Xu){
+  d <- XuCand[i]
+  p[[i]] <- biplot(
+  data.expr = Xu_NK[Cand_NKSig, ],
+  data.noexpr = d,
+  data.names = c("NK Cells_Xu", i),
+  data.expr.th = 0.5,
+  data.noexpr.th = 0.5,
+  annot = sourceAnnot,
+  annot.name = "Gene source",
+  point.labels = geneAnnot,
+  text.size = 0.75
+  ) +
+  geom_vline(xintercept = 2, col = "darkred", linetype = "dashed") +
+  geom_hline(yintercept = 2, col = "darkred", linetype = "dashed") +
+  theme(aspect.ratio = 0.4, legend.position = "none")
+}
+
+PlotTitle <- textGrob(paste0("Xu Data: NK vs immune cell subsets: median expression of Cand_NKsig (49 genes) \n "), gp=gpar(fontface="bold", fontsize=20))
+
+do.call(grid.arrange, c(p, list(ncol = 3, top = PlotTitle)))
+dev.off()
+
+# the 49 genes perform pretty well except for in gammaDelta T cells (and MAIT, but still probably ok as we will have DEGs for NK vs gamDel in the DownSet). Because we took the Union, some of the poorer genes that passed in Linsley (due to there only being 6 cell types in that data set, so lower resolution in that data set cf/ the Xu data where there are ~15 cell types) creep back in
+
+# MOYM2 is the gene that can be very highly expressed in some other blood cell subsets, but always >> greater expression in NK cells (so maybe it can be kept?)
+
+```
+
+NOW MOVE TO MARKDOWN #2 - previous (long) script stored in Archives under "Full Bulk RNAseq NK Biplot Sig ..."
+
+
+

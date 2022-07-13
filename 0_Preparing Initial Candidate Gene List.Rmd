@@ -1,0 +1,155 @@
+---
+title: "Preparing the initial list of candidate NK cell marker genes "
+author: "C Shembrey, S Foroutan"
+date: "Cleaned 20/06/2022"
+output: html_document
+---
+# First, we import the list of genes collated from the literature and in-house DE analysis of GSE60424 and GSE107011 (for details pertaining to DE analysis, see othe DE scripts in Github)
+
+```{r setup, include=FALSE}
+NKSigs <- read.csv("./data/Intervene_UpdatedJune2022.csv", stringsAsFactors = F, na.strings = "")
+
+# split sigs
+NKSigList <- list()
+for(i in colnames(NKSigs)){
+  NKSigList[[i]] <- NKSigs[ , i]}
+
+# remove NAs
+NKSigList <- lapply(NKSigList, function(x) { x[! is.na(x)]})
+
+# breakdown from various signature sources is as follows:
+lapply(NKSigList, length)
+
+AllGenes <- c(NKSigList$Receptors, NKSigList$CursonsSupplementaryData, NKSigList$Wang, NKSigList$PanT_DEGs, NKSigList$CIBERSORT_Activated, NKSigList$CIBERSORT_Resting, NKSigList$Linsley_DEGs, NKSigList$XuDEGs) #1010 genes total
+
+AllGenes <- unique(AllGenes) # 605 genes
+```
+
+# As a first step to refine the candidate 605 genes, we will merge the GSE60424 and GSE107011 genesets. This new geneset will now include genes that were up regulated in NK across ALL the comparisons (ie. upregulated in NK vs CD4 AND NK vs CD8 AND Monocytes etc) in either (or both) of the data two sets (see DE analysis scripts)
+
+```{r}
+# Implement the changes above, by removing the GSE60424 and GSE107011 genesets from AllGenes and replacing them with the "Merged DEGs" set:
+
+MergedDEGs_Bulk <- readRDS("../data/KeyData/blood_nk/NK_genelist_2bld.RDS") #82
+
+summary(MergedDEGs_Bulk$NK_upSet) #195 genes (merged from Xu and Lins DEGs?)
+summary(MergedDEGs_Bulk$NK_downSet) # 82 genes; we do not use the genes from the DownSet analysis in the  signature
+summary(MergedDEGs_Bulk$NK_panT_up) # 23 genes; these are already accounted for in AllGenes
+
+AllGenes2 <- c(NKSigList$Receptors, NKSigList$CursonsSupplementaryData, NKSigList$Wang, NKSigList$PanT_DEGs, NKSigList$CIBERSORT_Activated, NKSigList$CIBERSORT_Resting) # remove the XGSE60424 and GSE107011 genesets
+
+AllGenes2 <- c(AllGenes2, MergedDEGs_Bulk$NK_upSet) #296
+AllGenes2 <- unique(AllGenes2)
+
+length(AllGenes2) #296 genes
+ # map gene annotation info
+library(limma)
+nkMapped <- alias2SymbolUsingNCBI(AllGenes2, "../data/Homo_sapiens.gene_info",
+   required.columns = c("GeneID","Symbol","description", "Synonyms"))
+
+sum(is.na(nkMapped)) #296 genes, all mapped
+
+# Prepare csv file of 'final' initial geneset (for further refinement in subsequent analyses):
+
+# remove C19orf84 (see chunk below; outlier gene from DE analysis):
+nkMapped <- nkMapped[! grepl("C19orf84", nkMapped$Symbol), ]
+#write.csv(nkMapped, "Initial_NK_Sig_295_Genes.csv")
+```
+
+# Generate Venn diagram for the Linsley and Xu DE Analysis (Figure 1 inset; the upset plot in the main panel was used by inputting the "Intervene_UpdatedJune2022.csv" file into the Intervene Shiny app available at: https://intervene.shinyapps.io/intervene/)
+```{r}
+# Linsley DE analysis:
+Bulk_DE1 <- read.table("../data/NK_Signatures/Compiled/LinsDEGs_bldCells_NK_nonNK.txt", header = T)
+
+dim(Bulk_DE1) # 301 genes
+Bulk_DE1$Direction[Bulk_DE1$logFC > 0] <- "Up"
+Bulk_DE1$Direction[Bulk_DE1$logFC < 0] <- "Down"
+
+library(limma)
+DEGsID <- alias2SymbolUsingNCBI(Bulk_DE1$SYMBOL, "../data/Homo_sapiens.gene_info",
+   required.columns = c("GeneID","Symbol","description", "Synonyms"))
+DEGsID <- DEGsID[complete.cases(DEGsID$GeneID), ]  ## It decreases to 290 genes
+# how may are Up DEGs?
+DEGsID <- merge(DEGsID, 
+Bulk_DE1[, c("ENTREZID", "Direction")], 
+  by.x = "GeneID", 
+  by.y = "ENTREZID")
+
+DEGsID$Direction[DEGsID$Direction == "Up"] <- "DEG_up"
+DEGsID$Direction[DEGsID$Direction == "Down"] <- "DEG_down"
+
+dim(DEGsID) # 290 x 5
+table(DEGsID$Direction) # 10 down, 280 up
+
+DEGs_Lins_Up <- DEGsID[DEGsID$Direction == "DEG_up", ]
+dim(DEGs_Lins_Up) # 280 genes
+
+LinsDEGS <- DEGs_Lins_Up$Symbol
+#write.csv(LinsDEGS, "UpDEGs_Linsley_NK_vs_AllOtherImmuneCells.csv")
+
+# Xu DEGs:
+Bulk_DE2 <- read.csv("../data/KeyData/blood_nk/Bulk_DE_Analaysis_Xu2019.csv")
+Bulk_DE2 <- Bulk_DE2[ , -c(3:8)]
+
+Bulk_DE2 <- alias2SymbolUsingNCBI(Bulk_DE2$Symbols, "../data/Homo_sapiens.gene_info",
+   required.columns = c("GeneID","Symbol","description", "Synonyms"))
+
+Bulk_DE2 <- Bulk_DE2[complete.cases(Bulk_DE2$GeneID), ]
+Bulk_DE2$Source <- "Xu_BulkDEGs"
+Bulk_DE2$CellType <- "NKCell"
+Xu_DEG_Symbols <- Bulk_DE2$Symbol
+length(Xu_DEG_Symbols) # 427 genes
+
+#write.csv(Xu_DEG_Symbols, "UpDEGs_Xu_NK_vs_AllOtherImmuneCells.csv")
+
+# Compare:
+sum(DEGs_Lins_Up$Symbol %in% Xu_DEG_Symbols) # 182 
+sum(Xu_DEG_Symbols %in% DEGs_Lins_Up$Symbol) # 182 ie. there are 182 common genes
+
+require("gplots")
+venn(list(Xu_DEGs = Xu_DEG_Symbols, Lins_DEGs = DEGs_Lins_Up$Symbol))
+# 182 overlapping genes, 98 genes unique to Linsley, 245 genes unique to Xu
+
+# Next, we merged all the genes from the two bulk DE analyses (Linsley and Xu) into one source, called "MergedDEGs_Bulk". This list includes genes that were up regulated in NK across all the comparisons (ie. upregulated in NK vs CD4 AND NK vs CD8 AND Monocytes etc) in either (or both) of the data two sets
+
+MergedDEGs_Bulk <- readRDS("../data/KeyData/blood_nk/NK_genelist_2bld.RDS") 
+MergedDEGs_Bulk$NK_upSet # 195 genes
+
+venn(list(Xu_DEGs = Xu_DEG_Symbols, Lins_DEGs = DEGs_Lins_Up$Symbol, MrgBulkDEGs = MergedDEGs_Bulk$NK_upSet))
+
+# which is the 1 outlier gene?
+which(! MergedDEGs_Bulk$NK_upSet %in% Xu_DEG_Symbols)
+A <- MergedDEGs_Bulk$NK_upSet[c(186:194)] # "USP43"    "C19orf84" "GRIK4"    "KIFC3"    "KRT81"    "MEIS1"    "FAT4"     "BAALC"    "CABLES1" 
+
+which(! MergedDEGs_Bulk$NK_upSet %in% DEGs_Lins_Up$Symbol)
+B <- MergedDEGs_Bulk$NK_upSet[c(8, 21:22, 34, 36, 45, 50, 88, 135,172, 187, 195)] # "LINC00298"   "FKBP10"      "LINC01451"   "IRF6"        "LEXM"        "GOLGA8N"     "MYOM2"       "EFNA5"       "ANKRD20A11P" "RBFOX2"   # "C19orf84"    "MIR181A2HG"      "BAALC"    "CABLES1" 
+
+intersect(A,B) # "C19orf84"
+
+# Remove C19orf84 and replot venn diagram
+MergedDEGs_Bulk$NK_upSet <- MergedDEGs_Bulk$NK_upSet[-c(187)]
+venn(list(Xu_DEGs = Xu_DEG_Symbols, Lins_DEGs = DEGs_Lins_Up$Symbol, MrgBulkDEGs = MergedDEGs_Bulk$NK_upSet)) # this plot was recreated in Adobe Illustrator for aesthetic purposes
+
+# which are the 7 genes that are in both Xu_DEGs and Lins_DEGs but not in the merged data?
+C <- intersect(Xu_DEG_Symbols, DEGs_Lins_Up$Symbol) # 182 genes = 175 + 7
+D <- intersect(MergedDEGs_Bulk$NK_upSet, C) # 175 genes
+which(! C %in% D)
+C[c(7, 73, 96, 117, 140, 167, 178)] # "KIR2DL4"  "DLL1"     "L3MBTL4"  "TBC1D31"  "MYO6"     "ITPRIPL1" "EPS8L1"  
+
+# How many of the panT DEGs are in the panImmune DEGs?
+length(MergedDEGs_Bulk$NK_panT_up) # 23
+length(MergedDEGs_Bulk$NK_upSet) # 194
+sum(MergedDEGs_Bulk$NK_panT_up %in% MergedDEGs_Bulk$NK_upSet) # only 12?
+which(! MergedDEGs_Bulk$NK_panT_up %in% MergedDEGs_Bulk$NK_upSet)
+MergedDEGs_Bulk$NK_panT_up[c(2, 6:8, 10:14, 16, 20)] # "ADAM28" "MPEG1"  "FCER1G" "FES"    "GSN"    "HBA1"   "HBA2"   "HBB"    "HCK"    "MEF2C"  "SYK"   
+```
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
